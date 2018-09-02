@@ -18,12 +18,12 @@ export class KanjiInfo {
     public strokeEnds!: Location[];
     private comparers!: Partial<Record<MatchAlgorithmKey, IKanjiComparer>>;
 
-    private static parseHex(s: string): number {
+    public static parseHex(s: string): number {
         const n = parseInt(s, 16);
-        if (n.toString(16) === s.toLowerCase()) {
+        if (n) {
             return n;
         }
-        throw new Error("NumberFormatException");
+        throw new Error("NumberFormatException " + s);
     }
 
     /**
@@ -172,6 +172,7 @@ export class KanjiInfo {
 
             // Get stroke array and normalise it
             const inputStrokes = this.loadingStrokes;
+
             this.strokes = InputStroke.normalise(inputStrokes);
 
             // Find directions
