@@ -18,6 +18,14 @@ export class KanjiInfo {
     public strokeEnds!: Location[];
     private comparers!: Partial<Record<MatchAlgorithmKey, IKanjiComparer>>;
 
+    private static parseHex(s: string): number {
+        const n = parseInt(s, 16);
+        if (n.toString(16) === s.toLowerCase()) {
+            return n;
+        }
+        throw new Error("NumberFormatException");
+    }
+
     /**
 	 * Converts a two-digit, lowercase hex string to an integer. (This is a lot
 	 * faster than doing a substring and Integer.parseInt; I profiled it and
@@ -27,7 +35,7 @@ export class KanjiInfo {
 	 * @return Value as integer
 	 */
     private static getTwoDigitHexInt(input: string, pos: number): number {
-        return parseInt(input.substring(pos, pos + 2), 16);
+        return this.parseHex(input.substring(pos, pos + 2));
     }
 
     /**
@@ -56,10 +64,10 @@ export class KanjiInfo {
                 }
 
                 ki.strokes[i] = new Stroke(
-                    KanjiInfo.getTwoDigitHexInt(full, offset),
-                    KanjiInfo.getTwoDigitHexInt(full, offset + 3),
-                    KanjiInfo.getTwoDigitHexInt(full, offset + 6),
-                    KanjiInfo.getTwoDigitHexInt(full, offset + 9));
+                    this.getTwoDigitHexInt(full, offset),
+                    this.getTwoDigitHexInt(full, offset + 3),
+                    this.getTwoDigitHexInt(full, offset + 6),
+                    this.getTwoDigitHexInt(full, offset + 9));
                 offset += 11;
             }
 
@@ -124,10 +132,10 @@ export class KanjiInfo {
                 }
 
                 ki.strokes[i] = new Stroke(
-                    parseInt(full.substring(offset, offset + 2), 16),
-                    parseInt(full.substring(offset + 3, offset + 5), 16),
-                    parseInt(full.substring(offset + 6, offset + 8), 16),
-                    parseInt(full.substring(offset + 9, offset + 11), 16));
+                    this.parseHex(full.substring(offset, offset + 2)),
+                    this.parseHex(full.substring(offset + 3, offset + 5)),
+                    this.parseHex(full.substring(offset + 6, offset + 8)),
+                    this.parseHex(full.substring(offset + 9, offset + 11)));
                 offset += 11;
             }
         } catch {
