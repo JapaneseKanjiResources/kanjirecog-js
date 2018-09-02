@@ -10,7 +10,8 @@
         "member-ordering": false,
         "max-line-length": false,
         "one-variable-per-declaration": false,
-        "no-bitwise": false
+        "no-bitwise": false,
+        "ordered-imports": false
     },
     "rulesDirectory": []
 }
