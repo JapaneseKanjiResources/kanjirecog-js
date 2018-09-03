@@ -4,6 +4,7 @@ import { Direction } from "./Direction";
 import { Location } from "./Location";
 import { MatchAlgorithmKey, MatchAlgorithm } from "./MatchAlgorithm";
 import { IKanjiComparer } from "./KanjiComparer";
+import { KanjiInfoDto } from "./KanjiInfoDto";
 import AsyncLock from "async-lock";
 
 export class KanjiInfo {
@@ -292,11 +293,15 @@ export class KanjiInfo {
 	 * @param out Writer that receives data
 	 * @throws IOException Any error
 	 */
-    public write(): string {
+    public write(): KanjiInfoDto {
         const code = this.kanji.codePointAt(0);
-        return ("<kanji unicode='"
-            + (code || 0).toString(16).toUpperCase()
-            + "' strokes='" + this.getFullSummary() + "'/>\n");
+
+        return new KanjiInfoDto((code || 0).toString(16).toUpperCase(),
+            this.getFullSummary());
+
+        // return ("<kanji unicode='"
+        //     + (code || 0).toString(16).toUpperCase()
+        //     + "' strokes='" + this.getFullSummary() + "'/>\n");
     }
 
     /**

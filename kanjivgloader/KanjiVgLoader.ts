@@ -2,6 +2,7 @@ import sax from "sax";
 import fs from "fs";
 import { KanjiInfo } from "../src/KanjiInfo";
 import { InputStroke } from "../src/InputStroke";
+import { KanjiList } from "../src/KanjiList";
 
 const read: KanjiInfo[] = [];
 const warnings: string[] = [];
@@ -9,13 +10,16 @@ const done = new Set<number>();
 
 let current: KanjiInfo;
 
+const warnAndHalt = false;
 const strict = true;
 const saxStream = sax.createStream(strict, {});
 
 function warn(s: string) {
     warnings.push(s);
-    console.log(s);
-    process.exit();
+    if (warnAndHalt) {
+        console.log(s);
+        process.exit();
+    }
 }
 
 saxStream.on("opentag", (node) => {
@@ -86,17 +90,29 @@ saxStream.on("closetag", (tag) => {
     }
 });
 
+saxStream.on("end", () => {
+    console.log("Loaded " + read.length + " kanji.");
+    console.log();
+
+    if (warnings.length > 0) {
+        console.log("Warnings:");
+        for (const warning of warnings) {
+            console.log("\t" + warning);
+        }
+        console.log();
+    }
+
+    const list = new KanjiList();
+    for (const kanji of read) {
+        list.add(kanji);
+    }
+
+    const json = list.save();
+    console.log(json);
+});
+
 fs.createReadStream("./data/kanjivg-20160426.xml")
     .pipe(saxStream)
-    .pipe(fs.createWriteStream("./data/strokes.xml"))
-    .on("finish", () => {
-        console.log(warnings);
-        console.log(read.length);
-        console.log("summ");
-        for (const x of read) {
-            console.log(x.write());
-            break;
-        }
-    }).on("error", (e) => {
+    .on("error", (e) => {
         console.log(e);
     });

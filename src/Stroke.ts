@@ -5,6 +5,10 @@ import { Location } from "./Location";
  * Single kanji stroke.
  */
 export class Stroke {
+
+    // All values in range 0-255
+    // startX, startY, endX, endY;
+
     /**
 	 * Constructs from float data.
 	 * @param startX Start position (x) 0-1
