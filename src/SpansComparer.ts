@@ -23,10 +23,10 @@ export class SpansComparer implements IKanjiComparer {
     public static NO_MATCH = -1;
 
     /**
- * Array of possible matching strokes. The indexes of this array are in
- * the form startX * LOCATION_RANGE^3 + startY * LOCATION_RANGE^2 +
- * endX * LOCATION_RANGE + endY
- */
+     * Array of possible matching strokes. The indexes of this array are in
+     * the form startX * LOCATION_RANGE^3 + startY * LOCATION_RANGE^2 +
+     * endX * LOCATION_RANGE + endY
+     */
     private positions: Position[];
 
     private count = 0;
@@ -178,7 +178,7 @@ export class SpanScore {
      */
     constructor(readonly stroke: number, readonly score: number) { }
 
-    public static sortDelegate(th: SpanScore, other: SpanScore): number {
+    public static compare(th: SpanScore, other: SpanScore): number {
         if (other.score > th.score) {
             return 1;
         } else if (other.score < th.score) {
@@ -198,7 +198,7 @@ export class Position {
     }
 
     public finish() {
-        this.spanScores = this.spanSet.sort((a, b) => SpanScore.sortDelegate(a, b));
+        this.spanScores = this.spanSet.sort((a, b) => SpanScore.compare(a, b));
         this.spanSet = null;
     }
 
