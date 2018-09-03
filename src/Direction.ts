@@ -22,7 +22,7 @@ export class Direction {
     /** No clear movement */
     public static readonly X = new Direction(-1, "\u26aa");
 
-    public static readonly directions: Direction[] = [Direction.N, Direction.NE, Direction.E, Direction.SE, Direction.S, Direction.SW, Direction.W, Direction.NW, Direction.X];
+    private static readonly directions: Direction[] = [Direction.N, Direction.NE, Direction.E, Direction.SE, Direction.S, Direction.SW, Direction.W, Direction.NW, Direction.X];
 
     constructor(readonly index: number, readonly display: string) { }
 

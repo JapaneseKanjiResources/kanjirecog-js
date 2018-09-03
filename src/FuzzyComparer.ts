@@ -1,18 +1,16 @@
 import { IKanjiComparer } from "./KanjiComparer";
 import { KanjiInfo } from "./KanjiInfo";
-import { Direction } from "./Direction";
-import { Location } from "./Location";
 
 // tslint:disable-next-line:max-classes-per-file
 export class FuzzyComparer implements IKanjiComparer {
 
-    public drawnPairs: Pair[];
-    public drawnPoints: Point[];
+    private drawnPairs: Pair[];
+    private drawnPoints: Point[];
 
-    public static SCOREMULTI_NOT_PAIR = 0.9;
-    public static SCOREMULTI_WRONG_DIRECTION = 0.97;
+    public static readonly SCOREMULTI_NOT_PAIR = 0.9;
+    public static readonly SCOREMULTI_WRONG_DIRECTION = 0.97;
 
-    public static BEST_SCORES_SORT_FIRST = 5;
+    public static readonly BEST_SCORES_SORT_FIRST = 5;
 
     public init(drawn: KanjiInfo) {
         // Set up data about drawn pairs/points
@@ -39,7 +37,7 @@ export class FuzzyComparer implements IKanjiComparer {
     }
 
     private getPairPoints(pairs: Pair[]): Point[] {
-        const result= new Array<Point>(pairs.length * 2); // new Point[pairs.length * 2];
+        const result= new Array<Point>(pairs.length * 2);
         let out = 0;
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < pairs.length; i++) {
@@ -126,11 +124,11 @@ export class Pair {
     public a: Point;
     public b: Point;
 
-    public pointCount: number = 0;
+    private pointCount: number = 0;
 
-    public scores: number[][];
-    public maxBScore: number = 0;
-    public maxAScore: number = 0;
+    private scores: number[][];
+    private maxBScore: number = 0;
+    private maxAScore: number = 0;
 
     public bestScore: number = 0;
     public bestAIndex: number = 0;
@@ -142,9 +140,9 @@ export class Pair {
     }
 
     public initDrawn(maxStrokes: number) {
-        this.scores = []; // new float[maxStrokes * 2][];
+        this.scores = [];
         for (let i = 0; i < maxStrokes * 2; i++) {
-            this.scores[i] = new Array<number>(maxStrokes * 2).fill(0); // new float[maxStrokes * 2];
+            this.scores[i] = new Array<number>(maxStrokes * 2).fill(0);
         }
         this.a.initDrawn(maxStrokes);
         this.b.initDrawn(maxStrokes);
@@ -272,21 +270,21 @@ export class ScoreAndIndex {
 export class Point {
     public static SIMILAR_RANGE = 13;
 
-    public x: number = 0;
-    public y: number = 0;
-    public xLess: number = 0;
-    public xMore: number = 0;
-    public xSimilar: number = 0;
-    public yLess: number = 0;
-    public yMore: number = 0;
-    public ySimilar: number = 0;
+    private x: number = 0;
+    private y: number = 0;
+    private xLess: number = 0;
+    private xMore: number = 0;
+    private xSimilar: number = 0;
+    private yLess: number = 0;
+    private yMore: number = 0;
+    private ySimilar: number = 0;
 
     public pair: Pair;
-
     public score: number[];
     public sortedScore: ScoreAndIndex[];
-    public preSortedScore: ScoreAndIndex[];
-    public best: number[] = []; // new int[FuzzyComparer.BEST_SCORES_SORT_FIRST];
+
+    private preSortedScore: ScoreAndIndex[];
+    private best = new Array<number>(FuzzyComparer.BEST_SCORES_SORT_FIRST).fill(0);
 
     constructor(x: number, y: number) {
         this.x = Math.trunc((x + 0.5) * 255);

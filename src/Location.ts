@@ -22,7 +22,7 @@ export class Location {
     /** Basically in the middle */
     public static readonly MID = new Location(1, 1, "\u2588");
 
-    public static readonly locations: Location[] = [Location.N, Location.NE, Location.E, Location.SE, Location.S, Location.SW, Location.W, Location.NW, Location.MID];
+    private static readonly locations: Location[] = [Location.N, Location.NE, Location.E, Location.SE, Location.S, Location.SW, Location.W, Location.NW, Location.MID];
 
     constructor(readonly x: number, readonly y: number, readonly display: string) {}
 

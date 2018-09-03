@@ -1,7 +1,5 @@
 import { IKanjiComparer } from "./KanjiComparer";
 import { KanjiInfo } from "./KanjiInfo";
-import { Direction } from "./Direction";
-import { Location } from "./Location";
 
 export class SpansComparer implements IKanjiComparer {
 

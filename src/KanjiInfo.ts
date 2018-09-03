@@ -12,12 +12,12 @@ export class KanjiInfo {
     private lock = new AsyncLock();
 
     private loadingStrokes: InputStroke[];
-    private strokes!: Stroke[];
-    public strokeDirections!: Direction[];
-    public moveDirections!: Direction[];
-    public strokeStarts!: Location[];
-    public strokeEnds!: Location[];
-    private comparers!: Partial<Record<MatchAlgorithmKey, IKanjiComparer>>;
+    private strokes: Stroke[];
+    public strokeDirections: Direction[];
+    public moveDirections: Direction[];
+    public strokeStarts: Location[];
+    public strokeEnds: Location[];
+    private comparers: Partial<Record<MatchAlgorithmKey, IKanjiComparer>>;
 
     public static parseHex(s: string): number {
         const n = parseInt(s, 16);

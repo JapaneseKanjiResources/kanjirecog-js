@@ -2,9 +2,9 @@ import { KanjiInfo } from "./KanjiInfo";
 
 export class KanjiMatch {
     /**
-         * @param kanji Kanji
-         * @param score Match score (higher is better)
-         */
+     * @param kanji Kanji
+     * @param score Match score (higher is better)
+     */
     constructor(readonly kanjiInfo: KanjiInfo, readonly score: number) { }
 
     public static compare(th: KanjiMatch, o: KanjiMatch): number {
