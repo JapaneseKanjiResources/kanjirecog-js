@@ -39,9 +39,10 @@ export class FuzzyComparer implements IKanjiComparer {
     }
 
     private getPairPoints(pairs: Pair[]): Point[] {
-        const result: Point[] = []; // new Point[pairs.length * 2];
+        const result= new Array<Point>(pairs.length * 2); // new Point[pairs.length * 2];
         let out = 0;
-        for (let i = 0; i < pairs.length * 2; i++) {
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < pairs.length; i++) {
             result[out++] = pairs[i].a;
             result[out++] = pairs[i].b;
         }
@@ -125,15 +126,15 @@ export class Pair {
     public a: Point;
     public b: Point;
 
-    public pointCount: number;
+    public pointCount: number = 0;
 
     public scores: number[][];
-    public maxBScore: number;
-    public maxAScore: number;
+    public maxBScore: number = 0;
+    public maxAScore: number = 0;
 
-    public bestScore: number;
-    public bestAIndex: number;
-    public bestBIndex: number;
+    public bestScore: number = 0;
+    public bestAIndex: number = 0;
+    public bestBIndex: number = 0;
 
     constructor(a: Point, b: Point) {
         this.a = a;
@@ -143,7 +144,7 @@ export class Pair {
     public initDrawn(maxStrokes: number) {
         this.scores = []; // new float[maxStrokes * 2][];
         for (let i = 0; i < maxStrokes * 2; i++) {
-            this.scores[i] = []; // new float[maxStrokes * 2];
+            this.scores[i] = new Array<number>(maxStrokes * 2).fill(0); // new float[maxStrokes * 2];
         }
         this.a.initDrawn(maxStrokes);
         this.b.initDrawn(maxStrokes);
@@ -212,7 +213,7 @@ export class Pair {
             const aScore = this.a.sortedScore[aIndex];
             const aPointIndex = aScore.index;
             if (aScore.score + this.maxBScore < mustBeOver
-                || otherPoints[aPointIndex] === null) {
+                || otherPoints[aPointIndex] == null) {
                 // If A score + any B score can't beat min score, then continue, or
                 // also if point is done
                 continue;
@@ -222,7 +223,7 @@ export class Pair {
             for (let bIndex = 0; bIndex < this.pointCount; bIndex++) {
                 const bScore = this.b.sortedScore[bIndex];
                 const bPointIndex = bScore.index;
-                if (bPointIndex === aPointIndex || otherPoints[bPointIndex] === null) {
+                if (bPointIndex === aPointIndex || otherPoints[bPointIndex] == null) {
                     continue;
                 }
 
@@ -252,11 +253,11 @@ export class Pair {
 // tslint:disable-next-line:max-classes-per-file
 export class ScoreAndIndex {
 
-    public score: number;
-    public index: number;
-    public used: boolean;
+    public score: number = 0;
+    public index: number = 0;
+    public used: boolean = false;
 
-    public compare(th: ScoreAndIndex, o: ScoreAndIndex): number {
+    public static compare(th: ScoreAndIndex, o: ScoreAndIndex): number {
         if (o.score > th.score) {
             return 1;
         } else if (o.score < th.score) {
@@ -271,14 +272,14 @@ export class ScoreAndIndex {
 export class Point {
     public static SIMILAR_RANGE = 13;
 
-    public x: number;
-    public y: number;
-    public xLess: number;
-    public xMore: number;
-    public xSimilar: number;
-    public yLess: number;
-    public yMore: number;
-    public ySimilar: number;
+    public x: number = 0;
+    public y: number = 0;
+    public xLess: number = 0;
+    public xMore: number = 0;
+    public xSimilar: number = 0;
+    public yLess: number = 0;
+    public yMore: number = 0;
+    public ySimilar: number = 0;
 
     public pair: Pair;
 
@@ -320,9 +321,9 @@ export class Point {
 
     public initDrawn(maxStrokes: number) {
         // Initialise the array only once per drawn character
-        this.score = []; // new int[maxStrokes * 2];
-        this.sortedScore = []; // new ScoreAndIndex[maxStrokes * 2];
-        this.preSortedScore = []; // new ScoreAndIndex[maxStrokes * 2 + 1];
+        this.score = new Array<number>(maxStrokes * 2); // new int[maxStrokes * 2];
+        this.sortedScore =  new Array<ScoreAndIndex>(maxStrokes * 2); // new ScoreAndIndex[maxStrokes * 2];
+        this.preSortedScore = new Array<ScoreAndIndex>(maxStrokes * 2 + 1); // new ScoreAndIndex[maxStrokes * 2 + 1];
         for (let i = 0; i < maxStrokes * 2; i++) {
             this.preSortedScore[i] = new ScoreAndIndex();
         }
@@ -387,5 +388,6 @@ export class Point {
         //
         // 			// Sort score into order
         // 			Arrays.sort(sortedScore);
+        //          this.sortedScore.sort((a, b) => ScoreAndIndex.compare(a, b));
     }
 }
