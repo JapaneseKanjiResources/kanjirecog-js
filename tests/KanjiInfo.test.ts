@@ -12,7 +12,7 @@ describe("KanjiInfo.test", () => {
         const one = new KanjiInfo("x");
         one.addStroke(InputStroke.fromFloats(0, 0, 100, 100));
         one.addStroke(InputStroke.fromFloats(100, 0, 0, 100));
-        await one.finish();
+        one.finish();
 
         assert.equal("x", one.kanji);
         assert.equal(2, one.getStrokeCount());
@@ -36,8 +36,7 @@ describe("KanjiInfo.test", () => {
 
             // Check the directions are basically the same (may be slight differences
             // because rounding could push the '<0.1' type comparisons either way)
-            const matchScore = await loaded.getMatchScore(kanjiInfo,
-                MatchAlgorithm.STRICT);
+            const matchScore = loaded.getMatchScore(kanjiInfo, MatchAlgorithm.STRICT);
 
             assert.isTrue(matchScore > 94, "matchScore = " + matchScore);
             totalScore += matchScore;

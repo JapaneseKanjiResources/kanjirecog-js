@@ -34,8 +34,7 @@ describe("SpansComparer.test", () => {
                     console.log();
                 }
             }
-            const matches = await
-                list.getTopMatches(big, MatchAlgorithm.SPANS);
+            const matches = list.getTopMatches(big, MatchAlgorithm.SPANS);
             assert.equal(big.kanji, matches[0].kanjiInfo.kanji);
         }
     });

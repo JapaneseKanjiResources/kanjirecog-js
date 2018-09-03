@@ -12,12 +12,12 @@ describe("KanjiList.test", () => {
         const one = new KanjiInfo("x");
         one.addStroke(InputStroke.fromFloats(0, 0, 100, 100));
         one.addStroke(InputStroke.fromFloats(100, 0, 0, 100));
-        await one.finish();
+        one.finish();
         list.add(one);
         const two = new KanjiInfo("y");
         two.addStroke(InputStroke.fromFloats(0, 0, 50, 50));
         two.addStroke(InputStroke.fromFloats(100, 0, 0, 100));
-        await two.finish();
+        two.finish();
         list.add(two);
 
         assert.equal(0, list.getKanji(1).length);

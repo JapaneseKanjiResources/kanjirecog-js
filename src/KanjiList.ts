@@ -62,8 +62,8 @@ export class KanjiList {
 	 * @return Top matches above search threshold
 	 * @throws IllegalArgumentException If match algorithm not set
 	 */
-    public async getTopMatches(compare: KanjiInfo,
-                               algo: MatchAlgorithm): Promise<KanjiMatch[]> {
+    public getTopMatches(compare: KanjiInfo,
+                         algo: MatchAlgorithm): KanjiMatch[] {
         // TreeSet<KanjiMatch> matches = new TreeSet<KanjiMatch>();
         let matches: KanjiMatch[] = [];
 
@@ -98,7 +98,7 @@ export class KanjiList {
         // }
         // let i = 0;
         for (const other of list) {
-            const score = await compare.getMatchScore(other, algo);
+            const score = compare.getMatchScore(other, algo);
             const match = new KanjiMatch(other, score);
             matches.push(match);
             // if(progress != null)
@@ -124,7 +124,7 @@ export class KanjiList {
         }
 
         // return results.toArray(new KanjiMatch[results.size()]);
-        return Promise.resolve(results);
+        return results;
     }
 
     public save(): KanjiInfoDto[] {

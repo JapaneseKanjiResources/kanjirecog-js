@@ -29,8 +29,7 @@ describe("FuzzyComparer.test", () => {
                     console.log();
                 }
             }
-            const matches = await
-                list.getTopMatches(big, MatchAlgorithm.FUZZY);
+            const matches = list.getTopMatches(big, MatchAlgorithm.FUZZY);
             assert.equal(big.kanji, matches[0].kanjiInfo.kanji);
         }
 

@@ -5,11 +5,8 @@ import { Location } from "./Location";
 import { MatchAlgorithmKey, MatchAlgorithm } from "./MatchAlgorithm";
 import { IKanjiComparer } from "./KanjiComparer";
 import { KanjiInfoDto } from "./KanjiInfoDto";
-import AsyncLock from "async-lock";
 
 export class KanjiInfo {
-
-    private lock = new AsyncLock();
 
     private loadingStrokes: InputStroke[];
     private strokes: Stroke[];
@@ -152,33 +149,29 @@ export class KanjiInfo {
 	 * @param stroke New stroke
 	 * @throws IllegalStateException If already finished
 	 */
-    public async addStroke(stroke: InputStroke) {
-        return this.lock.acquire("sync", () => {
-            if (this.loadingStrokes == null) {
-                throw new Error("Cannot add strokes after loading");
-            }
-            this.loadingStrokes.push(stroke);
-        });
+    public addStroke(stroke: InputStroke) {
+        if (this.loadingStrokes == null) {
+            throw new Error("Cannot add strokes after loading");
+        }
+        this.loadingStrokes.push(stroke);
     }
 
     /**
 	 * Marks kanji as finished, normalising all strokes.
 	 * @throws IllegalStateException If already finished
 	 */
-    public async finish() {
-        return this.lock.acquire("sync", () => {
-            if (this.loadingStrokes == null) {
-                throw new Error("Cannot finish more than once");
-            }
+    public finish() {
+        if (this.loadingStrokes == null) {
+            throw new Error("Cannot finish more than once");
+        }
 
-            // Get stroke array and normalise it
-            const inputStrokes = this.loadingStrokes;
+        // Get stroke array and normalise it
+        const inputStrokes = this.loadingStrokes;
 
-            this.strokes = InputStroke.normalise(inputStrokes);
+        this.strokes = InputStroke.normalise(inputStrokes);
 
-            // Find directions
-            this.findDirections();
-        });
+        // Find directions
+        this.findDirections();
     }
 
     /**
@@ -312,21 +305,19 @@ export class KanjiInfo {
 	 * @return Score
 	 * @throws IllegalArgumentException If other kanji has inappropriate stroke count
 	 */
-    public async getMatchScore(other: KanjiInfo, algo: MatchAlgorithm): Promise<number> {
+    public getMatchScore(other: KanjiInfo, algo: MatchAlgorithm): number {
         let ret!: IKanjiComparer;
-        await this.lock.acquire("sync", () => {
-            if (this.comparers == null) {
-                this.comparers = {};
-            }
+        if (this.comparers == null) {
+            this.comparers = {};
+        }
 
-            let comparer = this.comparers[algo.key];
-            if (comparer == null) {
-                comparer = algo.newComparer(this);
-                this.comparers[algo.key] = comparer;
-            }
-            ret = comparer;
-        });
+        let comparer = this.comparers[algo.key];
+        if (comparer == null) {
+            comparer = algo.newComparer(this);
+            this.comparers[algo.key] = comparer;
+        }
+        ret = comparer;
 
-        return Promise.resolve(ret.getMatchScore(other));
+        return ret.getMatchScore(other);
     }
 }
