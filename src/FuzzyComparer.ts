@@ -37,7 +37,7 @@ export class FuzzyComparer implements IKanjiComparer {
     }
 
     private getPairPoints(pairs: Pair[]): Point[] {
-        const result= new Array<Point>(pairs.length * 2);
+        const result = new Array<Point>(pairs.length * 2);
         let out = 0;
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < pairs.length; i++) {

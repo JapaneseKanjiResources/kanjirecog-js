@@ -1,8 +1,5 @@
-import "mocha";
-import { assert } from "chai";
 import { KanjiInfo } from "../src/KanjiInfo";
-import { KanjiVgLoader } from "../kanjivgloader/KanjiVgLoader";
-import { InputStroke } from "../src/InputStroke";
+import { KanjiVgLoader } from "../src/KanjiVgLoader";
 
 export class KanjiVgLoaderTest {
     private static reader: KanjiVgLoader;
@@ -10,6 +7,7 @@ export class KanjiVgLoaderTest {
     private static DEBUG = false;
 
     public static async getAll(): Promise<KanjiInfo[]> {
+        let x = 0;
         if (KanjiVgLoaderTest.info == null) {
             KanjiVgLoaderTest.reader = new KanjiVgLoader();
             KanjiVgLoaderTest.info = await KanjiVgLoaderTest.reader.loadKanji();
