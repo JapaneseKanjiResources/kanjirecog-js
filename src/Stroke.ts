@@ -39,7 +39,7 @@ export class Stroke {
         output.startY = startY;
         output.endX = endX;
         output.endY = endY;
-        return;
+        return output;
     }
 
     private static convert(value: number): number {
