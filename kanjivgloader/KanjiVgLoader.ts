@@ -1,12 +1,14 @@
 import sax from "sax";
 import fs from "fs";
+import pako from "pako";
 import { KanjiInfo } from "../src/KanjiInfo";
 import { InputStroke } from "../src/InputStroke";
 import { KanjiList } from "../src/KanjiList";
+import { KanjiInfoDto } from "../src/KanjiInfoDto";
 
-const read: KanjiInfo[] = [];
-const warnings: string[] = [];
-const done = new Set<number>();
+let read: KanjiInfo[] = [];
+let warnings: string[] = [];
+let done = new Set<number>();
 
 let current: KanjiInfo;
 
@@ -102,13 +104,23 @@ saxStream.on("end", () => {
         console.log();
     }
 
-    const list = new KanjiList();
+    let list = new KanjiList();
     for (const kanji of read) {
         list.add(kanji);
     }
 
-    const json = list.save();
-    console.log(json);
+    const dtos: KanjiInfoDto[] = list.save();
+
+    read = null;
+    list = null;
+    warnings = null;
+
+    const json = JSON.stringify(dtos);
+    const buffer = pako.deflate(json, { level: 5 });
+    console.log(json.length);
+    console.log(buffer.length);
+    const ungzipped = pako.inflate(buffer);
+    console.log(ungzipped.length);
 });
 
 fs.createReadStream("./data/kanjivg-20160426.xml")

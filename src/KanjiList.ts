@@ -24,7 +24,7 @@ export class KanjiList {
         list.push(info);
     }
 
-    public save(): string {
+    public save(): KanjiInfoDto[] {
         const output: KanjiInfoDto[] = [];
         for (const kinfos of this.kanji.values()) {
             for (const character of kinfos) {
@@ -32,6 +32,6 @@ export class KanjiList {
                 output.push(kinfoDto);
             }
         }
-        return JSON.stringify(output);
+        return output;
     }
 }
