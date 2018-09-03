@@ -111,8 +111,8 @@ describe("Stroke.test", () => {
     });
 });
 
-function assertStroke(stroke: Stroke,
-                      startX: number, startY: number, endX: number, endY: number) {
+export function assertStroke(stroke: Stroke,
+                             startX: number, startY: number, endX: number, endY: number) {
     assert.equal(startX, stroke.startX);
     assert.equal(startY, stroke.startY);
     assert.equal(endX, stroke.endX);

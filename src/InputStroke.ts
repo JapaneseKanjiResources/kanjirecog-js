@@ -3,10 +3,10 @@ import { PathData } from "./PathData";
 
 export class InputStroke {
 
-    private startX: number;
-    private startY: number;
-    private endX: number;
-    private endY: number;
+    public startX: number;
+    public startY: number;
+    public endX: number;
+    public endY: number;
 
     /**
     * Constructs from an SVG path. The full SVG path sequence is not accepted.
