@@ -118,9 +118,16 @@ saxStream.on("end", () => {
     const json = JSON.stringify(dtos);
     const buffer = pako.deflate(json, { level: 5 });
     console.log(json.length);
-    console.log(buffer.length);
-    const ungzipped = pako.inflate(buffer);
-    console.log(ungzipped.length);
+
+    const ws = fs.createWriteStream("./data/strokes.dat");
+    ws.write(buffer);
+    ws.end();
+
+    const rs = fs.createReadStream("./data/strokes.dat");
+    fs.readFile("./data/strokes.dat", (err, data) => {
+        const ungzipped = pako.inflate(buffer);
+        console.log(ungzipped.length);
+    });
 });
 
 fs.createReadStream("./data/kanjivg-20160426.xml")
