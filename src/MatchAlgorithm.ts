@@ -15,6 +15,10 @@ export interface IKanjiComparerConstructor {
 */
 export class MatchAlgorithm {
 
+    /**
+     * Accurate, fast, but strict algorithm (requires precise stroke count
+     * and order).
+     */
     public static readonly STRICT = new MatchAlgorithm("STRICT", 0, StrictComparer);
 
     /**

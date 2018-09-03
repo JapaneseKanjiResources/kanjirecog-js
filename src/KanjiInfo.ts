@@ -64,7 +64,7 @@ export class KanjiInfo {
                     offset++; // Skip colon
                 }
 
-                ki.strokes[i] = new Stroke(
+                ki.strokes[i] = Stroke.fromInts(
                     this.getTwoDigitHexInt(full, offset),
                     this.getTwoDigitHexInt(full, offset + 3),
                     this.getTwoDigitHexInt(full, offset + 6),
@@ -132,7 +132,7 @@ export class KanjiInfo {
                     offset++; // Skip colon
                 }
 
-                ki.strokes[i] = new Stroke(
+                ki.strokes[i] = Stroke.fromInts(
                     this.parseHex(full.substring(offset, offset + 2)),
                     this.parseHex(full.substring(offset + 3, offset + 5)),
                     this.parseHex(full.substring(offset + 6, offset + 8)),

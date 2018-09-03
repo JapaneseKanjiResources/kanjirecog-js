@@ -7,7 +7,10 @@ import { Location } from "./Location";
 export class Stroke {
 
     // All values in range 0-255
-    // startX, startY, endX, endY;
+    public startX: number;
+    public startY: number;
+    public endX: number;
+    public endY: number;
 
     /**
 	 * Constructs from float data.
@@ -19,22 +22,28 @@ export class Stroke {
 	 */
     public static fromFloats(startX: number, startY: number,
                              endX: number, endY: number): Stroke {
-        return new this(this.convert(startX),
+        return this.fromInts(this.convert(startX),
             this.convert(startY),
             this.convert(endX),
             this.convert(endY));
     }
 
-    private static convert(value: number): number {
-        return Math.trunc(value * 255 + 0.49999);
-    }
-
-    constructor(readonly startX: number, readonly startY: number,
-                readonly endX: number, readonly endY: number) {
+    public static fromInts(startX: number, startY: number,
+                           endX: number, endY: number): Stroke {
         if (startX < 0 || startX > 255 || startY < 0 || startY > 255
             || endX < 0 || endX > 255 || endY < 0 || endY > 255) {
             throw new RangeError("Value out of range");
         }
+        const output = new this();
+        output.startX = startX;
+        output.startY = startY;
+        output.endX = endX;
+        output.endY = endY;
+        return;
+    }
+
+    private static convert(value: number): number {
+        return Math.trunc(value * 255 + 0.49999);
     }
 
     /**
