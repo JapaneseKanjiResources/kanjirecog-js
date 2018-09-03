@@ -227,7 +227,7 @@ export class KanjiInfo {
 	 * @throws IllegalStateException If loaded in a way that doesn't give
 	 *   these
 	 */
-    private getStroke(index: number): Stroke {
+    public getStroke(index: number): Stroke {
         if (this.strokes == null) {
             throw new Error("Cannot call getStroke in this state");
         }
