@@ -5,7 +5,7 @@ import { Direction } from "../src/Direction";
 import { Location } from "../src/Location";
 import { InputStroke } from "../src/InputStroke";
 
-describe("StrokeTest", () => {
+describe("Stroke.test", () => {
 
     it("testCreateBasic", () => {
         const stroke = Stroke.fromInts(1, 2, 3, 4);
@@ -54,12 +54,12 @@ describe("StrokeTest", () => {
     it("testMoveDirection", () => {
         const inputStrokes =
             [
-                new InputStroke("M23.78,21.29"
+                InputStroke.fromSvgPath("M23.78,21.29"
                     + "c3.6,0.9,6.76,0.85,10.36,0.3"
                     + "c10.48-1.6,38.27-5.5,40.43-5.84"
                     + "c3.93-0.62,4.68,1.86,2.07,4.08"
                     + "c-2.6,2.22-14.89,12.42-21.68,17.44"),
-                new InputStroke("M51.94,38.24"
+                    InputStroke.fromSvgPath("M51.94,38.24"
                     + "C61.5,42.5,64.75,70.25,57.89,90"
                     + "c-3.24,9.32-8.64,2.5-10.39,0.5"),
             ];

@@ -21,7 +21,7 @@ export class KanjiInfo {
 
     public static parseHex(s: string): number {
         const n = parseInt(s, 16);
-        if (n) {
+        if (!isNaN(n)) {
             return n;
         }
         throw new Error("NumberFormatException " + s);
@@ -35,7 +35,7 @@ export class KanjiInfo {
 	 * @param pos Position in string of first digit
 	 * @return Value as integer
 	 */
-    private static getTwoDigitHexInt(input: string, pos: number): number {
+    public static getTwoDigitHexInt(input: string, pos: number): number {
         return this.parseHex(input.substring(pos, pos + 2));
     }
 
@@ -72,9 +72,9 @@ export class KanjiInfo {
                 offset += 11;
             }
 
-        } catch {
+        } catch (e) {
             throw new Error("Invalid summary(" + full
-                + ") for kanji (" + kanji + ")");
+                + ") for kanji (" + kanji + ")" + e);
         }
 
         ki.findDirections();
@@ -139,9 +139,9 @@ export class KanjiInfo {
                     this.parseHex(full.substring(offset + 9, offset + 11)));
                 offset += 11;
             }
-        } catch {
+        } catch (e) {
             throw new Error("Invalid summary(" + full
-                + ") for kanji (" + kanji + ")");
+                + ") for kanji (" + kanji + ")" + e);
         }
 
         return ki;
@@ -152,8 +152,8 @@ export class KanjiInfo {
 	 * @param stroke New stroke
 	 * @throws IllegalStateException If already finished
 	 */
-    public addStroke(stroke: InputStroke) {
-        this.lock.acquire("sync", () => {
+    public async addStroke(stroke: InputStroke) {
+        return this.lock.acquire("sync", () => {
             if (this.loadingStrokes == null) {
                 throw new Error("Cannot add strokes after loading");
             }
@@ -165,8 +165,8 @@ export class KanjiInfo {
 	 * Marks kanji as finished, normalising all strokes.
 	 * @throws IllegalStateException If already finished
 	 */
-    public finish() {
-        this.lock.acquire("sync", () => {
+    public async finish() {
+        return this.lock.acquire("sync", () => {
             if (this.loadingStrokes == null) {
                 throw new Error("Cannot finish more than once");
             }
@@ -312,9 +312,9 @@ export class KanjiInfo {
 	 * @return Score
 	 * @throws IllegalArgumentException If other kanji has inappropriate stroke count
 	 */
-    public getMatchScore(other: KanjiInfo, algo: MatchAlgorithm): number {
+    public async getMatchScore(other: KanjiInfo, algo: MatchAlgorithm): Promise<number> {
         let ret!: IKanjiComparer;
-        this.lock.acquire("sync", () => {
+        await this.lock.acquire("sync", () => {
             if (this.comparers == null) {
                 this.comparers = {};
             }
@@ -327,6 +327,6 @@ export class KanjiInfo {
             ret = comparer;
         });
 
-        return ret.getMatchScore(other);
+        return Promise.resolve(ret.getMatchScore(other));
     }
 }

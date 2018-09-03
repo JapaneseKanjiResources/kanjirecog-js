@@ -3,10 +3,10 @@ import { PathData } from "./PathData";
 
 export class InputStroke {
 
-    private startX!: number;
-    private startY!: number;
-    private endX!: number;
-    private endY!: number;
+    private startX: number;
+    private startY: number;
+    private endX: number;
+    private endY: number;
 
     /**
     * Constructs from an SVG path. The full SVG path sequence is not accepted.
@@ -15,7 +15,9 @@ export class InputStroke {
     * @param svgPath SVG path string
     * @throws IllegalArgumentException If string can't be parsed
     */
-    constructor(svgPath: string) {
+    public static fromSvgPath(svgPath: string) {
+        const output = new InputStroke();
+
         const data = new PathData(svgPath);
 
         // Read initial M
@@ -26,12 +28,12 @@ export class InputStroke {
 
         // Read start co-ordinates (note: 'm' is not really relative at start
         // of path, so treated the same as M; see SVG spec)
-        this.startX = data.readNumber();
-        this.startY = data.readNumber();
+        output.startX = data.readNumber();
+        output.startY = data.readNumber();
 
         // Handle all other commands
-        let x = this.startX;
-        let y = this.startY;
+        let x = output.startX;
+        let y = output.startY;
         let lastCommand = "-1";
         loop: while (true) {
             let command = data.readLetter();
@@ -76,8 +78,8 @@ export class InputStroke {
                     break;
                 case "z":
                 case "Z":
-                    x = this.startX;
-                    y = this.startY;
+                    x = output.startX;
+                    y = output.startY;
                     break;
                 default:
                     throw new Error("Unexpected path command: "
@@ -85,8 +87,25 @@ export class InputStroke {
             }
         }
 
-        this.endX = x;
-        this.endY = y;
+        output.endX = x;
+        output.endY = y;
+        return output;
+    }
+
+    /**
+	 * Constructs from raw data.
+	 * @param startX Start position (x) 0-1
+	 * @param startY Start position (y) 0-1
+	 * @param endX End position (x) 0-1
+	 * @param endY End position (y) 0-1
+	 */
+    public static fromFloats(startX: number, startY: number, endX: number, endY: number) {
+        const output = new InputStroke();
+        output.startX = startX;
+        output.endX = endX;
+        output.startY = startY;
+        output.endY = endY;
+        return output;
     }
 
     /**
