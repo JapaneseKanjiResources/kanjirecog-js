@@ -6,7 +6,7 @@ import { SpansComparer } from "./SpansComparer";
 
 export type MatchAlgorithmKey = "STRICT" | "FUZZY" | "FUZZY_1OUT" | "FUZZY_2OUT" | "SPANS" | "SPANS_1OUT" | "SPANS_2OUT";
 
-export interface IKanjiComparerConstructor {
+interface IKanjiComparerConstructor {
     new(): IKanjiComparer;
 }
 
@@ -65,7 +65,7 @@ export class MatchAlgorithm {
     * @return Comparer object, already inited
     */
     public newComparer(drawn: KanjiInfo): IKanjiComparer {
-        let comparer!: IKanjiComparer;
+        let comparer: IKanjiComparer;
         try {
             comparer = new this.ctor();
         } catch {

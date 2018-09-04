@@ -26,10 +26,6 @@ export class Location {
 
     constructor(readonly x: number, readonly y: number, readonly display: string) {}
 
-    public toString(): string {
-        return this.display;
-    }
-
     /**
      * Reads from string.
      * @param s Input string

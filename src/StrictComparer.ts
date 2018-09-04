@@ -13,10 +13,10 @@ export class StrictComparer implements IKanjiComparer {
 
     private static readonly CLOSE_WEIGHT = 0.7;
 
-    private drawnStarts!: Location[];
-    private drawnEnds!: Location[];
-    private drawnDirections!: Direction[];
-    private drawnMoves!: Direction[];
+    private drawnStarts: Location[];
+    private drawnEnds: Location[];
+    private drawnDirections: Direction[];
+    private drawnMoves: Direction[];
 
     /**
 	 * Initialises with given drawn kanji.

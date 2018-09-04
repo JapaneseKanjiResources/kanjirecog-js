@@ -22,7 +22,7 @@ export class FuzzyComparer implements IKanjiComparer {
     }
 
     private convertKanjiInfo(info: KanjiInfo): Pair[] {
-        const result: Pair[] = []; // new Pair[info.getStrokeCount()];
+        const result: Pair[] = [];
         for (let i = 0; i < info.getStrokeCount(); i++) {
             const stroke = info.getStroke(i);
             result[i] = new Pair(
@@ -120,10 +120,7 @@ export class FuzzyComparer implements IKanjiComparer {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class Pair {
-    public a: Point;
-    public b: Point;
-
+class Pair {
     private pointCount: number = 0;
 
     private scores: number[][];
@@ -134,10 +131,7 @@ export class Pair {
     public bestAIndex: number = 0;
     public bestBIndex: number = 0;
 
-    constructor(a: Point, b: Point) {
-        this.a = a;
-        this.b = b;
-    }
+    constructor(public a: Point, readonly b: Point) {}
 
     public initDrawn(maxStrokes: number) {
         this.scores = [];
@@ -249,7 +243,7 @@ export class Pair {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class ScoreAndIndex {
+class ScoreAndIndex {
 
     public score: number = 0;
     public index: number = 0;
@@ -267,8 +261,8 @@ export class ScoreAndIndex {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class Point {
-    public static SIMILAR_RANGE = 13;
+class Point {
+    public static readonly SIMILAR_RANGE = 13;
 
     private x: number = 0;
     private y: number = 0;

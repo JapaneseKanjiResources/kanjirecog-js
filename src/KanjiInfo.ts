@@ -306,7 +306,6 @@ export class KanjiInfo {
 	 * @throws IllegalArgumentException If other kanji has inappropriate stroke count
 	 */
     public getMatchScore(other: KanjiInfo, algo: MatchAlgorithm): number {
-        let ret!: IKanjiComparer;
         if (this.comparers == null) {
             this.comparers = {};
         }
@@ -316,8 +315,7 @@ export class KanjiInfo {
             comparer = algo.newComparer(this);
             this.comparers[algo.key] = comparer;
         }
-        ret = comparer;
 
-        return ret.getMatchScore(other);
+        return comparer.getMatchScore(other);
     }
 }

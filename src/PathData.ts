@@ -1,6 +1,6 @@
 /**
-	 * Class to make it easier to read path data.
-	 */
+ * Class to make it easier to read path data.
+ */
 export class PathData {
     public static EOL = "-1";
     public static NUMBER = "-2";

@@ -3,8 +3,8 @@ import { KanjiInfoDto } from "./KanjiInfoDto";
 import { MatchAlgorithm } from "./MatchAlgorithm";
 import { KanjiMatch } from "./KanjiMatch";
 
-// export interface IKanjiInfoMap {
-//     [key: number]: KanjiInfo[];
+// interface IKanjiInfoMap {
+//   [key: number]: KanjiInfo[];
 // }
 
 export class KanjiList {
@@ -64,52 +64,35 @@ export class KanjiList {
 	 */
     public getTopMatches(compare: KanjiInfo,
                          algo: MatchAlgorithm): KanjiMatch[] {
-        // TreeSet<KanjiMatch> matches = new TreeSet<KanjiMatch>();
         let matches: KanjiMatch[] = [];
-
-        // List<KanjiInfo> list = new LinkedList<KanjiInfo>();
         const list: KanjiInfo[] = [];
 
         if (compare.getStrokeCount() > 0) {
-            // synchronized(this)
-            // {
-                // Do either -2 and +2, -1 and +1, or just 0
-                const range = algo.out;
-                let count = compare.getStrokeCount() - range;
-                for (let i = 0; i < 2; i++) {
-                    if (count > 0) {
-                        // List<KanjiInfo> countList = kanji.get(count);
-                        const countList = this.kanjiInfos.get(count);
-                        if (countList != null) {
-                            list.push(...countList);
-                        }
-                    }
-                    count += 2 * range;
-                    if (range === 0) {
-                        break;
+            // Do either -2 and +2, -1 and +1, or just 0
+            const range = algo.out;
+            let count = compare.getStrokeCount() - range;
+            for (let i = 0; i < 2; i++) {
+                if (count > 0) {
+                    const countList = this.kanjiInfos.get(count);
+                    if (countList != null) {
+                        list.push(...countList);
                     }
                 }
-            // }
+                count += 2 * range;
+                if (range === 0) {
+                    break;
+                }
+            }
         }
-        // int max = list.size();
-        // if(progress != null)
-        // {
-        // 	progress.progress(0, max);
-        // }
-        // let i = 0;
+
         for (const other of list) {
             const score = compare.getMatchScore(other, algo);
             const match = new KanjiMatch(other, score);
             matches.push(match);
-            // if(progress != null)
-            // {
-            // 	progress.progress(++i, max);
-            // }
         }
         matches = matches.sort((a, b) => KanjiMatch.compare(a, b));
 
         // Pull everything down to half match score
-        // LinkedList<KanjiMatch> results = new LinkedList<KanjiMatch>();
         const results: KanjiMatch[] = [];
         let maxScore = -1;
         for (const match of matches) {
@@ -123,7 +106,6 @@ export class KanjiList {
             results.push(match);
         }
 
-        // return results.toArray(new KanjiMatch[results.size()]);
         return results;
     }
 

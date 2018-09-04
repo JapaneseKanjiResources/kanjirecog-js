@@ -169,7 +169,7 @@ export class SpansComparer implements IKanjiComparer {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class SpanScore {
+class SpanScore {
     /**
      * @param stroke Index of stroke within drawn kanji
      * @param score Score of this combination (how closely it reflects the stroke)
@@ -187,7 +187,7 @@ export class SpanScore {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class Position {
+class Position {
     private spanSet: SpanScore[] = [];
     private spanScores: SpanScore[];
 

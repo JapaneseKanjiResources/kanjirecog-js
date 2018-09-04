@@ -26,10 +26,6 @@ export class Direction {
 
     constructor(readonly index: number, readonly display: string) { }
 
-    public toString(): string {
-        return this.display;
-    }
-
     /**
      * Reads from string.
      * @param s Input string
@@ -60,14 +56,14 @@ export class Direction {
     /**
      * Threshold above which something counts as directional.
      */
-    public static DIRECTION_THRESHOLD = 51;
+    public static readonly DIRECTION_THRESHOLD = 51;
 
     /**
      * Propotion (out of 256) of dominant movement required to count as diagonal.
      * (E.g. if this is 77 = approx 30%, and if movement S is 10, then movenent E must
      * be at least 10 * 77 / 256 in order to count as SE).
      */
-    public static DIAGONAL_THRESHOLD = 77;
+    public static readonly DIAGONAL_THRESHOLD = 77;
 
     /**
      * Calculates the direction between two points.
