@@ -13,6 +13,7 @@ export class KanjiVgLoader {
     public readonly warnings: string[] = [];
     public readonly done = new Set<number>();
     private readonly warnAndHalt = false;
+    private jyouyouKanjiList: string[];
 
     private warn(s: string) {
         this.warnings.push(s);
@@ -22,8 +23,19 @@ export class KanjiVgLoader {
         }
     }
 
+    public loadJyouyou(): string[] {
+        if (this.jyouyouKanjiList) {
+            return this.jyouyouKanjiList;
+        }
+        return this.jyouyouKanjiList = fs.readFileSync("./data/jyouyou.txt", "utf8")
+            .split(/[\r\n|\s]/)
+            .filter((s) => s);
+    }
+
     public async loadKanji(): Promise < KanjiInfo[] > {
         let current: KanjiInfo;
+
+        const jy = this.loadJyouyou().slice();
 
         const strict = true;
         const saxStream = sax.createStream(strict, {});
@@ -55,14 +67,19 @@ export class KanjiVgLoader {
                 }
                 // Check if code point is actually a CJK ideograph
                 const kanjiString = String.fromCharCode(codePoint);
-                if ((codePoint >= 0x4e00 && codePoint <= 0x9fff)
-                    || (codePoint >= 0x3400 && codePoint <= 0x4dff)
-                    || (codePoint >= 0x20000 && codePoint <= 0x2a6df)
-                    || (codePoint >= 0xf900 && codePoint <= 0xfaff)
-                    || (codePoint >= 0x2f800 && codePoint <= 0x2fa1f)) {
+
+                const foundIndex = jy.indexOf(kanjiString);
+                if (foundIndex >= 0) {
+                // if (jy.includes(kanjiString)) {
+                // if ((codePoint >= 0x4e00 && codePoint <= 0x9fff)
+                //     || (codePoint >= 0x3400 && codePoint <= 0x4dff)
+                //     || (codePoint >= 0x20000 && codePoint <= 0x2a6df)
+                //     || (codePoint >= 0xf900 && codePoint <= 0xfaff)
+                //     || (codePoint >= 0x2f800 && codePoint <= 0x2fa1f)) {
+                    jy.splice(foundIndex, 1);
                     current = new KanjiInfo(kanjiString);
                 } else {
-                    // Ignore non-kanji characters
+                    // Ignore non-kanji (incl. non-常用) characters
                     return;
                 }
             } else if (node.name === "path") {
@@ -99,8 +116,13 @@ export class KanjiVgLoader {
         let saxStreamEnded = (): void => { throw new Error(); };
 
         saxStream.on("end", () => {
-
             saxStreamEnded();
+
+            for (const jyKanji in this.loadJyouyou()) {
+                if (this.read.some((kanjiInfo) => kanjiInfo.kanji === jyKanji)) {
+                    this.warn("Expected but not found: " + jyKanji);
+                }
+            }
         });
 
         return new Promise<KanjiInfo[]>((resolve, reject) => {
@@ -138,8 +160,8 @@ if (isMain) {
             }
 
             const list = new KanjiList();
-            for (const kanji of loader.read) {
-                list.add(kanji);
+            for (const kanjiInfo of loader.read) {
+                list.add(kanjiInfo);
             }
             list.finish();
 

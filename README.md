@@ -18,7 +18,7 @@ Small changes have been made in the area of parsing and transforming the SVG kan
 <br/>
 
 Summary
-
+* You can draw any Jouyou kanji (常用漢字) listed [here](http://nihongo.monash.edu/jouyoukanji.html);
 * Hiragana, katakana, and Latin characters are not supported.
 * There are four different recognising algorithms
   * Exact match - you must get the stroke count exactly right and the stroke order exactly right. Stroke direction is also important.
