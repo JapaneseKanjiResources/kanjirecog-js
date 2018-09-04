@@ -118,6 +118,7 @@ export class KanjiVgLoader {
             // for (const kanji of read) {
             //     list.add(kanji);
             // }
+            // list.finish();
 
             // const dtos: KanjiInfoDto[] = list.save();
 

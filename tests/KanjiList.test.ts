@@ -19,6 +19,7 @@ describe("KanjiList.test", () => {
         two.addStroke(InputStroke.fromFloats(100, 0, 0, 100));
         two.finish();
         list.add(two);
+        list.finish();
 
         assert.equal(0, list.getKanji(1).length);
 

@@ -23,6 +23,7 @@ describe("SpansComparer.test", () => {
         for (const kanjiInfo of readAll) {
             list.add(kanjiInfo);
         }
+        list.finish();
 
         const all20 = list.getKanji(20);
 

@@ -11,6 +11,7 @@ export class KanjiList {
 
     // private kanji: IKanjiInfoMap = {};
     private kanjiInfos = new Map<number, KanjiInfo[]>();
+    private finished = false;
 
     /**
 	 * Adds a kanji to the list.
@@ -26,11 +27,22 @@ export class KanjiList {
         list.push(info);
     }
 
+    public finish() {
+        this.kanjiInfos = new Map([...this.kanjiInfos].sort());
+        this.finished = true;
+    }
+
+    private checkFinished() {
+        if (!this.finished) {
+            throw new Error("Cannot call on unfinished kanji");
+        }
+    }
     /**
 	 * @param strokeCount Stroke count
 	 * @return All kanji with that stroke count
 	 */
     public getKanji(strokeCount: number): KanjiInfo[] {
+        this.checkFinished();
         const list = this.kanjiInfos.get(strokeCount);
         if (list == null) {
             return [];
@@ -44,6 +56,7 @@ export class KanjiList {
 	 * @throws IllegalArgumentException If kanji does not exist in list
 	 */
     public find(search: string): KanjiInfo {
+        this.checkFinished();
         for (const list of this.kanjiInfos.values()) {
             for (const info of list) {
                 if (info.kanji === search) {
@@ -64,6 +77,7 @@ export class KanjiList {
 	 */
     public getTopMatches(compare: KanjiInfo,
                          algo: MatchAlgorithm): KanjiMatch[] {
+        this.checkFinished();
         let matches: KanjiMatch[] = [];
         const list: KanjiInfo[] = [];
 
@@ -110,6 +124,7 @@ export class KanjiList {
     }
 
     public save(): KanjiInfoDto[] {
+        this.checkFinished();
         const output: KanjiInfoDto[] = [];
         for (const kinfos of this.kanjiInfos.values()) {
             for (const character of kinfos) {

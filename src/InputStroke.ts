@@ -82,8 +82,7 @@ export class InputStroke {
                     y = output.startY;
                     break;
                 default:
-                    throw new Error("Unexpected path command: "
-                        + command);
+                    throw new Error("Unexpected path command: " + command);
             }
         }
 

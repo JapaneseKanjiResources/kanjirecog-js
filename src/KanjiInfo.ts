@@ -10,11 +10,12 @@ export class KanjiInfo {
 
     private loadingStrokes: InputStroke[];
     private strokes: Stroke[];
+    private finished = false;
     public strokeDirections: Direction[];
     public moveDirections: Direction[];
     public strokeStarts: Location[];
     public strokeEnds: Location[];
-    private comparers: Partial<Record<MatchAlgorithmKey, IKanjiComparer>>;
+    private comparers = new Map<MatchAlgorithmKey, IKanjiComparer>();
 
     public static parseHex(s: string): number {
         const n = parseInt(s, 16);
@@ -161,7 +162,7 @@ export class KanjiInfo {
 	 * @throws IllegalStateException If already finished
 	 */
     public finish() {
-        if (this.loadingStrokes == null) {
+        if (this.finished) {
             throw new Error("Cannot finish more than once");
         }
 
@@ -191,6 +192,8 @@ export class KanjiInfo {
         for (let i = 1; i < this.strokes.length; i++) {
             this.moveDirections[i - 1] = this.strokes[i].getMoveDirection(this.strokes[i - 1]);
         }
+
+        this.finished = true;
     }
 
     /**
@@ -198,7 +201,7 @@ export class KanjiInfo {
 	 * @throws IllegalStateException If not finished
 	 */
     private checkFinished() {
-        if (this.strokeDirections == null) {
+        if (!this.finished) {
             throw new Error("Cannot call on unfinished kanji");
         }
     }
@@ -306,14 +309,10 @@ export class KanjiInfo {
 	 * @throws IllegalArgumentException If other kanji has inappropriate stroke count
 	 */
     public getMatchScore(other: KanjiInfo, algo: MatchAlgorithm): number {
-        if (this.comparers == null) {
-            this.comparers = {};
-        }
-
-        let comparer = this.comparers[algo.key];
+        let comparer = this.comparers.get(algo.key);
         if (comparer == null) {
             comparer = algo.newComparer(this);
-            this.comparers[algo.key] = comparer;
+            this.comparers.set(algo.key, comparer);
         }
 
         return comparer.getMatchScore(other);
