@@ -1,5 +1,5 @@
 import { KanjiInfo } from "./KanjiInfo";
-import { KanjiInfoDto } from "./KanjiInfoDto";
+import { KanjiInfoDto, KanjiInfoBinaryDto } from "./KanjiInfoDto";
 import { MatchAlgorithm } from "./MatchAlgorithm";
 import { KanjiMatch } from "./KanjiMatch";
 
@@ -129,6 +129,18 @@ export class KanjiList {
         for (const kinfos of this.kanjiInfos.values()) {
             for (const character of kinfos) {
                 const kinfoDto = character.write();
+                output.push(kinfoDto);
+            }
+        }
+        return output;
+    }
+
+    public saveBinary(): KanjiInfoBinaryDto[] {
+        this.checkFinished();
+        const output: KanjiInfoBinaryDto[] = [];
+        for (const kinfos of this.kanjiInfos.values()) {
+            for (const character of kinfos) {
+                const kinfoDto = character.writeBinary();
                 output.push(kinfoDto);
             }
         }

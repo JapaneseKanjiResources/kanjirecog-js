@@ -1,34 +1,32 @@
 import sax from "sax";
 import fs from "fs";
 import pako from "pako";
-import { KanjiInfo } from "../src/KanjiInfo";
-import { InputStroke } from "../src/InputStroke";
-import { KanjiList } from "../src/KanjiList";
-import { KanjiInfoDto } from "../src/KanjiInfoDto";
-import { endianness } from "os";
+import { KanjiInfo } from "./KanjiInfo";
+import { InputStroke } from "./InputStroke";
+import { KanjiList } from "./KanjiList";
 
 export class KanjiVgLoader {
 
     constructor(readonly path: string = "./data/kanjivg-20160426.xml") { }
 
-    public async loadKanji(): Promise<KanjiInfo[]> {
-        let read: KanjiInfo[] = [];
-        let warnings: string[] = [];
-        let done = new Set<number>();
+    public readonly read: KanjiInfo[] = [];
+    public readonly warnings: string[] = [];
+    public readonly done = new Set<number>();
+    private readonly warnAndHalt = false;
 
+    private warn(s: string) {
+        this.warnings.push(s);
+        if (this.warnAndHalt) {
+            console.log(s);
+            process.exit();
+        }
+    }
+
+    public async loadKanji(): Promise < KanjiInfo[] > {
         let current: KanjiInfo;
 
-        const warnAndHalt = false;
         const strict = true;
         const saxStream = sax.createStream(strict, {});
-
-        function warn(s: string) {
-            warnings.push(s);
-            if (warnAndHalt) {
-                console.log(s);
-                process.exit();
-            }
-        }
 
         saxStream.on("opentag", (node) => {
             if (node.name === "kanji") {
@@ -39,21 +37,21 @@ export class KanjiVgLoader {
                 // with the parser bizarrely misinterpreting some four-byte sequences.
                 const id = node.attributes.id.replace("kvg:kanji_", "");
                 if (id == null) {
-                    warn("<kanji> tag missing id=");
+                    this.warn("<kanji> tag missing id=");
                     return;
                 }
                 let codePoint;
                 try {
                     codePoint = KanjiInfo.parseHex(id);
                 } catch (e) {
-                    warn("<kanji> tag invalid id= (" + id + ")" + e);
+                    this.warn("<kanji> tag invalid id= (" + id + ")" + e);
                     return;
                 }
-                if (done.has(codePoint)) {
-                    warn("<kanji> duplicate id= (" + id + ")");
+                if (this.done.has(codePoint)) {
+                    this.warn("<kanji> duplicate id= (" + id + ")");
                     return;
                 } else {
-                    done.add(codePoint);
+                    this.done.add(codePoint);
                 }
                 // Check if code point is actually a CJK ideograph
                 const kanjiString = String.fromCharCode(codePoint);
@@ -71,7 +69,7 @@ export class KanjiVgLoader {
                 if (current != null) {
                     const path = node.attributes.d;
                     if (path == null) {
-                        warn("<stroke> tag in kanji " +
+                        this.warn("<stroke> tag in kanji " +
                             current.kanji + " missing path=, ignoring kanji");
                         current = null;
                         return;
@@ -80,7 +78,7 @@ export class KanjiVgLoader {
                         const stroke = InputStroke.fromSvgPath(path);
                         current.addStroke(stroke);
                     } catch (e) {
-                        warn("<stroke> tag in kanji " + current.kanji +
+                        this.warn("<stroke> tag in kanji " + current.kanji +
                             " invalid path= (" + path + "): " + e);
                         current = null;
                         return;
@@ -93,7 +91,7 @@ export class KanjiVgLoader {
             if (tag === "kanji") {
                 if (current != null) {
                     current.finish();
-                    read.push(current);
+                    this.read.push(current);
                 }
             }
         });
@@ -101,50 +99,14 @@ export class KanjiVgLoader {
         let saxStreamEnded = (): void => { throw new Error(); };
 
         saxStream.on("end", () => {
-            // console.log("Loaded " + read.length + " kanji.");
-            // console.log();
 
             saxStreamEnded();
-
-            // if (warnings.length > 0) {
-            //     console.log("Warnings:");
-            //     for (const warning of warnings) {
-            //         console.log("\t" + warning);
-            //     }
-            //     console.log();
-            // }
-
-            // let list = new KanjiList();
-            // for (const kanji of read) {
-            //     list.add(kanji);
-            // }
-            // list.finish();
-
-            // const dtos: KanjiInfoDto[] = list.save();
-
-            // read = null;
-            // list = null;
-            // warnings = null;
-
-            // const json = JSON.stringify(dtos);
-            // const buffer = pako.deflate(json, { level: 5 });
-            // console.log(json.length);
-
-            // const ws = fs.createWriteStream("./data/strokes.dat");
-            // ws.write(buffer);
-            // ws.end();
-
-            // const rs = fs.createReadStream("./data/strokes.dat");
-            // fs.readFile("./data/strokes.dat", (err, data) => {
-            //     const ungzipped = pako.inflate(buffer);
-            //     console.log(ungzipped.length);
-            // });
         });
 
         return new Promise<KanjiInfo[]>((resolve, reject) => {
 
             saxStreamEnded = () => {
-                resolve(read);
+                resolve(this.read);
             };
 
             fs.createReadStream(this.path)
@@ -154,4 +116,47 @@ export class KanjiVgLoader {
                 });
         });
     }
+}
+
+const isMain = (typeof require !== "undefined" && require.main === module);
+
+if (isMain) {
+    console.log("KanjiVgLoader");
+
+    const loader = new KanjiVgLoader();
+    loader.loadKanji()
+        .then(() => {
+            console.log("Loaded " + loader.read.length + " kanji.");
+            console.log();
+
+            if (loader.warnings.length > 0) {
+                console.log("Warnings:");
+                for (const warning of loader.warnings) {
+                    console.log("\t" + warning);
+                }
+                console.log();
+            }
+
+            const list = new KanjiList();
+            for (const kanji of loader.read) {
+                list.add(kanji);
+            }
+            list.finish();
+
+            const dtos = list.save();
+            const json = JSON.stringify(dtos);
+            const buffer = pako.deflate(json, { level: 5 });
+            console.log(json.length);
+
+            const datPath = "./data/strokes.dat";
+
+            const ws = fs.createWriteStream(datPath);
+            ws.write(buffer);
+            ws.end();
+
+            fs.readFile(datPath, (err, data) => {
+                const ungzipped = pako.inflate(buffer);
+                console.log(ungzipped.length);
+            });
+        });
 }

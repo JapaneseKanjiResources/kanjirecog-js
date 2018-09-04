@@ -4,7 +4,7 @@ import { Direction } from "./Direction";
 import { Location } from "./Location";
 import { MatchAlgorithmKey, MatchAlgorithm } from "./MatchAlgorithm";
 import { IKanjiComparer } from "./KanjiComparer";
-import { KanjiInfoDto } from "./KanjiInfoDto";
+import { KanjiInfoDto, KanjiInfoBinaryDto } from "./KanjiInfoDto";
 
 export class KanjiInfo {
 
@@ -262,7 +262,7 @@ export class KanjiInfo {
 	 * Obtains all stroke details as a from/to summary.
 	 * @return Full details as string
 	 */
-    public getFullSummary(): string {
+    private getFullSummary(): string {
         if (this.strokes == null) {
             throw new Error("Strokes not available");
         }
@@ -290,14 +290,20 @@ export class KanjiInfo {
 	 * @throws IOException Any error
 	 */
     public write(): KanjiInfoDto {
-        const code = this.kanji.codePointAt(0);
+        const code = this.kanji.codePointAt(0) || 0;
 
-        return new KanjiInfoDto((code || 0).toString(16).toUpperCase(),
+        return new KanjiInfoDto(code.toString(16).toUpperCase(),
             this.getFullSummary());
 
         // return ("<kanji unicode='"
         //     + (code || 0).toString(16).toUpperCase()
         //     + "' strokes='" + this.getFullSummary() + "'/>\n");
+    }
+
+    public writeBinary(): KanjiInfoBinaryDto {
+        const code = this.kanji.codePointAt(0) || 0;
+
+        return new KanjiInfoBinaryDto(code, this.strokes.slice());
     }
 
     /**
