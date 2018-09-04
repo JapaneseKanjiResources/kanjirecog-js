@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "test": "mocha --timeout 5000 -r ts-node/register tests/**/*.test.ts",
+    "test": "mocha --timeout 50000 -r ts-node/register tests/**/*.test.ts",
+    "perf": "rm -f isolate-*-v8.log && mocha --timeout 50000 --prof -r ts-node/register tests/FuzzyComparer.test.ts && node --prof-process *.log | more",
     "lint": "tslint --project ."
   },
   "author": "",

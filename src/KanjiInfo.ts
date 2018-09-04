@@ -262,7 +262,7 @@ export class KanjiInfo {
 	 * Obtains all stroke details as a from/to summary.
 	 * @return Full details as string
 	 */
-    private getFullSummary(): string {
+    public getFullSummary(): string {
         if (this.strokes == null) {
             throw new Error("Strokes not available");
         }

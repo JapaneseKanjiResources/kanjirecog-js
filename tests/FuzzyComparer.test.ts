@@ -20,13 +20,13 @@ describe("FuzzyComparer.test", () => {
         }
         list.finish();
 
-        for (let strokeCount = 18; strokeCount <= 20; strokeCount++) {
+        for (let strokeCount = 3; strokeCount <= 20; strokeCount++) {
             const all = list.getKanji(strokeCount);
 
             for (let i = 0; i < all.length && i < (DEBUG ? 100 : 5); i++) {
                 const big = all[i];
                 if (DEBUG) {
-                    console.log(big.kanji);
+                    console.log(strokeCount + ":" + big.kanji);
                     if (i % 10 === 9) {
                         console.log();
                     }
@@ -35,7 +35,9 @@ describe("FuzzyComparer.test", () => {
                 assert.equal(big.kanji, matches[0].kanjiInfo.kanji);
             }
 
-            console.log();
+            if (DEBUG) {
+                console.log();
+            }
         }
     });
 

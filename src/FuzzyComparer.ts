@@ -167,14 +167,14 @@ class Pair {
             for (let bIndex = 0; bIndex < this.pointCount; bIndex++) {
                 const bScore = this.b.score[bIndex];
 
-                if (bIndex === aIndex) {
+                if (bIndex == aIndex) {
                     continue;
                 }
 
                 // Basic score is sum of individual scores
                 let score = aScore + bScore;
 
-                if (aPair !== availablePoints[bIndex].pair) {
+                if (aPair != availablePoints[bIndex].pair) {
                     score *= FuzzyComparer.SCOREMULTI_NOT_PAIR;
                 } else if (wrongDirection) {
                     score *= FuzzyComparer.SCOREMULTI_WRONG_DIRECTION;
@@ -215,7 +215,7 @@ class Pair {
             for (let bIndex = 0; bIndex < this.pointCount; bIndex++) {
                 const bScore = this.b.sortedScore[bIndex];
                 const bPointIndex = bScore.index;
-                if (bPointIndex === aPointIndex || otherPoints[bPointIndex] == null) {
+                if (bPointIndex == aPointIndex || otherPoints[bPointIndex] == null) {
                     continue;
                 }
 
@@ -324,6 +324,22 @@ class Point {
     }
 
     public calcScore(otherPoints: Point[], maxScore: number) {
+        this.stage1(otherPoints, maxScore);
+        this.stage2();
+        this.stage3(otherPoints);
+        // 			System.err.println(Arrays.toString(sortedScore));
+
+        // 			for(int i=otherPoints.length; i<sortedScore.length; i++)
+        // 			{
+        // 				sortedScore[i] = new ScoreAndIndex(0, i);
+        // 			}
+        //
+        // 			// Sort score into order
+        // 			Arrays.sort(sortedScore);
+        //          this.sortedScore.sort((a, b) => ScoreAndIndex.compare(a, b));
+    }
+
+    public stage1(otherPoints: Point[], maxScore: number) {
         for (let i = 0; i < FuzzyComparer.BEST_SCORES_SORT_FIRST; i++) {
             this.best[i] = this.preSortedScore.length - 1;
         }
@@ -338,48 +354,58 @@ class Point {
                 + Math.abs(this.ySimilar - other.ySimilar);
 
             const thisScore = maxScore - difference;
-            this.preSortedScore[i].index = i;
-            this.preSortedScore[i].score = thisScore;
-            this.preSortedScore[i].used = false;
+            const pss = this.preSortedScore[i];
+            pss.index = i;
+            pss.score = thisScore;
+            pss.used = false;
             this.score[i] = thisScore;
 
             if (thisScore >= worstBestScore) {
-                let bestIndex = 0;
-                for (; bestIndex < FuzzyComparer.BEST_SCORES_SORT_FIRST - 1; bestIndex++) {
-                    if (thisScore > this.preSortedScore[this.best[bestIndex]].score) {
-                        break;
-                    }
-                }
-                for (let moveIndex = FuzzyComparer.BEST_SCORES_SORT_FIRST - 1; moveIndex > bestIndex; moveIndex--) {
-                    this.best[moveIndex] = this.best[moveIndex - 1];
-                }
+                const bestIndex = this.stage1a(thisScore);
+                this.stage1b(bestIndex);
                 this.best[bestIndex] = i;
-                if (bestIndex === FuzzyComparer.BEST_SCORES_SORT_FIRST - 1) {
+                if (bestIndex == FuzzyComparer.BEST_SCORES_SORT_FIRST - 1) {
                     worstBestScore = thisScore;
                 }
             }
         }
+    }
 
-        for (let i = 0; i < FuzzyComparer.BEST_SCORES_SORT_FIRST; i++) {
-            this.sortedScore[i] = this.preSortedScore[this.best[i]];
-            this.preSortedScore[this.best[i]].used = true;
+    public stage1a(thisScore: number): number {
+        let bestIndex = 0;
+        for (; bestIndex < FuzzyComparer.BEST_SCORES_SORT_FIRST - 1; bestIndex++) {
+            console.log("this.best[bestIndex]: " + this.best[bestIndex]);
+            if (thisScore > this.preSortedScore[this.best[bestIndex]].score) {
+                return bestIndex;
+            }
+            console.log();
         }
+        console.log();
+        console.log();
+        return bestIndex;
+    }
 
+    public stage1b(bestIndex: number) {
+        for (let moveIndex = FuzzyComparer.BEST_SCORES_SORT_FIRST - 1; moveIndex > bestIndex; moveIndex--) {
+            this.best[moveIndex] = this.best[moveIndex - 1];
+        }
+    }
+
+    public stage2() {
+        for (let i = 0; i < FuzzyComparer.BEST_SCORES_SORT_FIRST; i++) {
+            const pss = this.preSortedScore[this.best[i]];
+            this.sortedScore[i] = pss;
+            pss.used = true;
+        }
+    }
+
+    public stage3(otherPoints: Point[]) {
         let index = FuzzyComparer.BEST_SCORES_SORT_FIRST;
         for (let i = 0; i < otherPoints.length; i++) {
-            if (!this.preSortedScore[i].used) {
-                this.sortedScore[index++] = this.preSortedScore[i];
+            const pss = this.preSortedScore[i];
+            if (!pss.used) {
+                this.sortedScore[index++] = pss;
             }
         }
-        // 			System.err.println(Arrays.toString(sortedScore));
-
-        // 			for(int i=otherPoints.length; i<sortedScore.length; i++)
-        // 			{
-        // 				sortedScore[i] = new ScoreAndIndex(0, i);
-        // 			}
-        //
-        // 			// Sort score into order
-        // 			Arrays.sort(sortedScore);
-        //          this.sortedScore.sort((a, b) => ScoreAndIndex.compare(a, b));
     }
 }
