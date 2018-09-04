@@ -161,8 +161,9 @@ class Pair {
             if (aScore > this.maxAScore) {
                 this.maxAScore = aScore;
             }
-            const aPair = availablePoints[aIndex].pair;
-            const wrongDirection = aPair.a !== availablePoints[aIndex];
+            const ap = availablePoints[aIndex];
+            const aPair = ap.pair;
+            const wrongDirection = aPair.a != ap;
 
             for (let bIndex = 0; bIndex < this.pointCount; bIndex++) {
                 const bScore = this.b.score[bIndex];
@@ -345,15 +346,7 @@ class Point {
         }
         let worstBestScore = 0;
         for (let i = 0; i < otherPoints.length; i++) {
-            const other = otherPoints[i];
-
-            // Work out difference between each element of these points
-            const difference = Math.abs(this.xLess - other.xLess)
-                + Math.abs(this.xMore - other.xMore) + Math.abs(this.xSimilar - other.xSimilar)
-                + Math.abs(this.yLess - other.yLess) + Math.abs(this.yMore - other.yMore)
-                + Math.abs(this.ySimilar - other.ySimilar);
-
-            const thisScore = maxScore - difference;
+            const thisScore = this.calcThisScore(maxScore, otherPoints[i]);
             const pss = this.preSortedScore[i];
             pss.index = i;
             pss.score = thisScore;
@@ -371,17 +364,23 @@ class Point {
         }
     }
 
+    public calcThisScore(maxScore: number, other: Point): number {
+        const difference = Math.abs(this.xLess - other.xLess)
+        + Math.abs(this.xMore - other.xMore) + Math.abs(this.xSimilar - other.xSimilar)
+        + Math.abs(this.yLess - other.yLess) + Math.abs(this.yMore - other.yMore)
+        + Math.abs(this.ySimilar - other.ySimilar);
+
+        const thisScore = maxScore - difference;
+        return thisScore;
+    }
+
     public stage1a(thisScore: number): number {
         let bestIndex = 0;
         for (; bestIndex < FuzzyComparer.BEST_SCORES_SORT_FIRST - 1; bestIndex++) {
-            console.log("this.best[bestIndex]: " + this.best[bestIndex]);
             if (thisScore > this.preSortedScore[this.best[bestIndex]].score) {
                 return bestIndex;
             }
-            console.log();
         }
-        console.log();
-        console.log();
         return bestIndex;
     }
 
