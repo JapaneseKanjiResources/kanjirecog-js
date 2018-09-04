@@ -28,7 +28,7 @@ export class KanjiList {
     }
 
     public finish() {
-        this.kanjiInfos = new Map([...this.kanjiInfos].sort());
+        this.kanjiInfos = new Map([...this.kanjiInfos].sort((a, b) => a[0] - b[0]));
         this.finished = true;
     }
 
