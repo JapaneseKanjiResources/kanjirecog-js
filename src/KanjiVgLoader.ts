@@ -27,9 +27,14 @@ export class KanjiVgLoader {
         if (this.jyouyouKanjiList) {
             return this.jyouyouKanjiList;
         }
-        return this.jyouyouKanjiList = fs.readFileSync("./data/jyouyou.txt", "utf8")
-            .split(/[\r\n|\s]/)
+        this.jyouyouKanjiList = fs.readFileSync("./data/jyouyou.txt", "utf8")
+            .split(/\r?\n/)
+            .filter((s) => s && !s.startsWith("#"))
+            .map((s) => s.split(/\s/))
+            .reduce((x, y) => x.concat(y), []) // selectMany
             .filter((s) => s);
+
+        return this.jyouyouKanjiList;
     }
 
     public async loadKanji(): Promise < KanjiInfo[] > {
