@@ -20,20 +20,23 @@ describe("FuzzyComparer.test", () => {
         }
         list.finish();
 
-        const all20 = list.getKanji(20);
+        for (let strokeCount = 18; strokeCount <= 20; strokeCount++) {
+            const all = list.getKanji(strokeCount);
 
-        for (let i = 0; i < all20.length && i < (DEBUG ? 100 : 5); i++) {
-            const big = all20[i];
-            if (DEBUG) {
-                console.log(big.kanji);
-                if (i % 10 === 9) {
-                    console.log();
+            for (let i = 0; i < all.length && i < (DEBUG ? 100 : 5); i++) {
+                const big = all[i];
+                if (DEBUG) {
+                    console.log(big.kanji);
+                    if (i % 10 === 9) {
+                        console.log();
+                    }
                 }
+                const matches = list.getTopMatches(big, MatchAlgorithm.FUZZY);
+                assert.equal(big.kanji, matches[0].kanjiInfo.kanji);
             }
-            const matches = list.getTopMatches(big, MatchAlgorithm.FUZZY);
-            assert.equal(big.kanji, matches[0].kanjiInfo.kanji);
-        }
 
+            console.log();
+        }
     });
 
 });
