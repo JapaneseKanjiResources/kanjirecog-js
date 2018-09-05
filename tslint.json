@@ -1,17 +1,22 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
-    ],
-    "jsRules": {},
-    "rules": {
-        "no-console": false,
-        "jsdoc-format": false,
-        "member-ordering": false,
-        "max-line-length": false,
-        "one-variable-per-declaration": false,
-        "no-bitwise": false,
-        "ordered-imports": false
-    },
-    "rulesDirectory": []
+  "defaultSeverity": "warning",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "node_modules/**"
+    ]
+  },
+  "rules": {
+    "no-console": false,
+    "jsdoc-format": false,
+    "member-ordering": false,
+    "max-line-length": false,
+    "one-variable-per-declaration": false,
+    "no-bitwise": false,
+    "ordered-imports": false,
+    "triple-equals": false,
+    "object-literal-sort-keys": false
+    }
 }

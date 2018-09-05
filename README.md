@@ -28,3 +28,24 @@ Summary
 * The exact match algorithm performs best.
 * The algorithms do not work by 'looking' at the kanji you drew, so don't be surprised that most of the suggestions look totally different.
 * It is not a very good handwriting recogniser. For best results, draw kanji in the 'standard' way they would appear when printed.
+
+
+## Example project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
