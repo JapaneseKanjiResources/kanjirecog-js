@@ -14,7 +14,9 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "declaration": false, 
-    "types": [] 
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src",
