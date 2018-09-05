@@ -1,20 +1,23 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const isProductionEnv = process.env.NODE_ENV === 'production';
+
+const srcPublicDir = 'example/public/';
 
 module.exports = {
-    baseUrl: process.env.NODE_ENV === 'production'
+    baseUrl: (isProductionEnv)
         ? '/kanjirecog'
         : '/',
-        
+    
     outputDir: 'example/dist',
     pages: {
         index: {
             entry: 'example/main.ts',
-            template: 'example/public/index.html',
+            template: srcPublicDir + 'index.html',
             filename: 'index.html',
         },
     },
     configureWebpack: config => {
-        if (process.env.NODE_ENV === 'production') {
+        if (isProductionEnv) {
             // console.log();
             // console.log(" --- vue.config.js:configureWebpack ---"); 
             // console.log(config);
@@ -26,7 +29,7 @@ module.exports = {
         }
         
         config.plugins.push(new CopyWebpackPlugin([{
-            from: 'example/public/',
+            from: srcPublicDir,
             to: '.',
             ignore: ['index.html', '.DS_Store']
         }]));
