@@ -1,3 +1,4 @@
+// tsconfig.json for node
 {
   "compilerOptions": {
     /* Basic Options */
@@ -63,7 +64,8 @@
   // "include": ["src"],
   "exclude": [
     "node_modules",  // ...
-    "example" ,      // vue project
-    "test"           // tests
+    "example",       // vue project
+    "test",          // tests
+    "dist"
   ]
 }

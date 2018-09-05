@@ -25,7 +25,9 @@
     ]
   },
   "exclude": [
-    "node_modules",
+    "node_modules",  // ...
+    "src",           // kanjirecog
+    "test",          // tests
     "dist"
   ]
 }
