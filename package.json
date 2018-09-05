@@ -6,7 +6,7 @@
   "scripts": {
     "example-serve": "vue-cli-service serve",
     "example-build": "vue-cli-service build",
-    "example-lint": "vue-cli-service lint",
+    "lint": "vue-cli-service lint",
     "lib-build": "tsc  --noEmit --project tsconfig.node.json",
     "lib-generate": "ts-node --project tsconfig.node.json src/KanjiVgLoader.ts",
     "lib-test": "$npm_package_script_mocha",
