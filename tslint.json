@@ -9,6 +9,7 @@
     ]
   },
   "rules": {
+    "object-literal-sort-keys": false,
     "no-console": false,
     "jsdoc-format": false,
     "member-ordering": false,
@@ -16,7 +17,9 @@
     "one-variable-per-declaration": false,
     "no-bitwise": false,
     "ordered-imports": false,
-    "triple-equals": false,
+    "triple-equals": false
+  },
+  "jsRules":{
     "object-literal-sort-keys": false
-    }
+  }
 }
