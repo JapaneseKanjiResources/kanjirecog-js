@@ -24,10 +24,17 @@
       "scripthost"
     ]
   },
+  "include": [
+    "example/src/**/*.ts",
+    "example/src/**/*.tsx",
+    "example/src/**/*.vue",
+    "example/tests/**/*.ts",
+    "example/tests/**/*.tsx"
+  ],
   "exclude": [
-    "node_modules",  // ...
-    "src",           // kanjirecog
-    "test",          // tests
+    "node_modules",
+    "src",
+    "test",
     "dist"
   ]
 }
