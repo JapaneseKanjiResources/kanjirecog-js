@@ -14,6 +14,17 @@ module.exports = {
         },
     },
     configureWebpack: config => {
+        if (process.env.NODE_ENV === 'production') {
+            // console.log();
+            // console.log(" --- vue.config.js:configureWebpack ---"); 
+            // console.log(config);
+            // console.log(config.optimization);
+            // console.log(config.plugins);
+            config.performance = {};
+            config.performance.maxAssetSize = 500000;
+            config.performance.maxEntrypointSize = 500000;
+        }
+        
         config.plugins.push(new CopyWebpackPlugin([{
             from: 'example/public/',
             to: '.',
