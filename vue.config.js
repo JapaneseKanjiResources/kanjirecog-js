@@ -30,5 +30,10 @@ module.exports = {
             to: '.',
             ignore: ['index.html', '.DS_Store']
         }]));
+        config.plugins.push(new CopyWebpackPlugin([{
+            from: 'data/strokes.dat', /* from [projectdir]/data/strokes.dat */
+            to: 'data/strokes.dat',   /* to    [outputDir]/data/strokes.dat */
+            toType: 'file'
+        }]));
     }
 };
