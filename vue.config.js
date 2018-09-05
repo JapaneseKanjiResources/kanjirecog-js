@@ -8,7 +8,7 @@ module.exports = {
         ? '/kanjirecog'
         : '/',
     
-    outputDir: 'example/dist',
+    outputDir: 'dist/example', /* [projectDir]/dist/example */
     pages: {
         index: {
             entry: 'example/main.ts',
@@ -34,7 +34,7 @@ module.exports = {
             ignore: ['index.html', '.DS_Store']
         }]));
         config.plugins.push(new CopyWebpackPlugin([{
-            from: 'data/strokes.dat', /* from [projectdir]/data/strokes.dat */
+            from: 'data/strokes.dat', /* from [projectDir]/data/strokes.dat */
             to: 'data/strokes.dat',   /* to    [outputDir]/data/strokes.dat */
             toType: 'file'
         }]));

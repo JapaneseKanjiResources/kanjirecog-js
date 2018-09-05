@@ -30,22 +30,39 @@ Summary
 * It is not a very good handwriting recogniser. For best results, draw kanji in the 'standard' way they would appear when printed.
 
 
-## Example project setup
+
+## General project setup
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
 ```
 
 ### Lints and fixes files
 ```
 npm run lint
+```
+
+
+## 'kanjirecog' project
+```
+# Build check (compiles but does not emit any files)
+npm run lib-build
+
+# Generates strokes data file (parsing and transforming the SVG kanji)
+npm run lib-generate
+
+# Runs unit tests
+npm run lib-test
+
+# Runs performance test
+npm run lib-perf
+```
+
+
+## 'Example' project (a vue project) setup
+```
+# Compiles and hot-reloads for development
+npm run example-serve
+
+# Compiles and minifies for production
+npm run example-build
 ```

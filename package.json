@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "private": true,
   
-  "script_mocha": "mocha --timeout 50000 --project tsconfig.node.json -r ts-node/register tests/**/*.test.ts",
+  "script_mocha": "mocha --timeout 50000 --project tsconfig.node.json -r ts-node/register test/**/*.test.ts",
   
   "scripts": {
     "example-serve": "vue-cli-service serve",
     "example-build": "vue-cli-service build",
     "example-lint": "vue-cli-service lint",
   
+    "lib-build": "tsc  --noEmit --project tsconfig.node.json",
     "lib-generate": "ts-node --project tsconfig.node.json src/KanjiVgLoader.ts",
     "lib-test": "$npm_package_script_mocha",
     "lib-perf": "rm -f isolate-*-v8.log && $npm_package_script_mocha && node --prof-process *.log | more"
