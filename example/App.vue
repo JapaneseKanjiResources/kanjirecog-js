@@ -17,7 +17,7 @@
                         <b-button :disabled="undoDisabled" :variant="variant" @click="undo()">UNDO</b-button>
                     </b-button-group>
                     <b-button-group size="sm">
-                        <b-button variant="700" ref="actionMode">FUZZY</b-button>
+                        <b-button variant="700" ref="actionMode">{{actionText}}</b-button>
                     </b-button-group>
                 </div>
             </div>
@@ -28,7 +28,8 @@
                     <b-button v-for="btn in buttons"
                             :pressed.sync="btn.state"
                             :variant="variantOutline"
-                            :key="btn.kanji">
+                            :key="btn.kanji"
+                            @click="copyKanji(btn.kanji)">
                         {{ btn.kanji }}
                     </b-button>
                 </b-button-group>
@@ -71,6 +72,8 @@ export default class App extends Vue {
         actionsLeft: HTMLDivElement;
         actionMode: HTMLDivElement;
     };
+
+    public actionText = "SPANS";
 
     // lifecycle hook
     public mounted() {
@@ -139,6 +142,20 @@ export default class App extends Vue {
         { kanji: "十" },
     ];
 
+    public copyKanji(kanji: string) {
+        const textArea = document.createElement("textarea");
+        textArea.value = kanji;
+        textArea.style.cssText = "position:fixed;pointer-events:none;z-index:-9999;opacity:0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand("copy");
+        } catch (err) {
+            console.warn(err);
+        }
+        document.body.removeChild(textArea);
+    }
+
     public isLoading = true;
     public message = "Loading";
 
@@ -174,7 +191,7 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-    
+
     // find these variables in docs and node_modules/bootstrap/scss/bootstrap.scss
     // $font-size-sm: .675rem !default;
     @import "~bootstrap/scss/bootstrap";  // import complete bootstrap.scss source from node_modules using ~ alias
