@@ -7,4 +7,5 @@ __Summary__
 * You can draw any Jouyou kanji (常用漢字) listed [here](http://nihongo.monash.edu/jouyoukanji.html).
 * Hiragana, katakana, and Latin characters are not supported.
 
+
 ![Screenshot](/docs/screenshot.png)
