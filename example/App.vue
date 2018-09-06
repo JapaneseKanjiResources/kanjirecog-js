@@ -1,5 +1,4 @@
 <template>
-
     <div id="app" class="signature-pad">
         <div v-show="isLoading" data-alert="">
             <div v-text="message"></div>
@@ -98,7 +97,7 @@ export default class App extends Vue {
     constructor() {
         super();
 
-        const instr = "ここには手書き入力された文字に対応する候補文字が表示されます";
+        const instr = "手書き入力された漢字に対応する候補漢字がここに表示されます。";
         for (let i = 0; i < 10; i++) {
             this.kanjiResults1.push({ index: i, kanji: instr[i] });
             this.kanjiResults2.push({ index: i, kanji: instr[i + 10] });
