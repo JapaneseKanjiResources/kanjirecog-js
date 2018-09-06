@@ -17,7 +17,7 @@
                         <b-button :disabled="undoDisabled" :variant="variant" @click="undo()">UNDO</b-button>
                     </b-button-group>
                     <b-button-group size="sm">
-                        <b-button variant="700" ref="actionMode">{{actionText}}</b-button>
+                        <b-button variant="700" ref="algoMode">{{algoText}}</b-button>
                     </b-button-group>
                 </div>
             </div>
@@ -25,12 +25,11 @@
             </div>
             <div>
                 <b-button-group size="sm" ref="actionsRight">
-                    <b-button v-for="btn in buttons"
-                            :pressed.sync="btn.state"
+                    <b-button v-for="res in kanjiResults"
                             :variant="variantOutline"
-                            :key="btn.kanji"
-                            @click="copyKanji(btn.kanji)">
-                        {{ btn.kanji }}
+                            :key="res.index"
+                            @click="copyKanji(res.kanji)">
+                        {{ res.kanji }}
                     </b-button>
                 </b-button-group>
             </div>
@@ -43,26 +42,45 @@ import { Component, Vue } from "vue-property-decorator";
 import signature_pad from "signature_pad";
 import pako from "pako";
 import { KanjiList } from "../src/KanjiList";
+import { KanjiInfo } from "../src/KanjiInfo";
+import { InputStroke } from "../src/InputStroke";
 import { MatchAlgorithm } from "../src/MatchAlgorithm";
 
 @Component({})
 export default class App extends Vue {
-  private pad!: signature_pad;
+    public isLoading = true;
+    public message = "Loading";
+
+    // drawing pad
+    private pad!: signature_pad;
     private canvas!: HTMLCanvasElement;
 
+    // bootstrap variants for controls
+    public variant = "700";
+    public variantOutline = "outline-700";
+
+    // buttons state
     public clearDisabled = true;
     public undoDisabled = true;
+    public algoText = "FUZZY";
 
-    public clear() {
-        this.pad.clear();
-    }
+    public readonly kanjiResults: any[] = [];
 
-    public undo() {
-        const data = this.pad.toData();
-        if (data) {
-            data.pop(); // remove the last dot or line
-            this.pad.fromData(data);
-            this.undoDisabled = this.clearDisabled = !data.length; // disable buttons if empty after
+    // logic
+    private kanjiList: KanjiList;
+    private inputStrokes: InputStroke[] = [];
+    private startX: number;
+    private startY: number;
+    private endX: number;
+    private endY: number;
+
+    private  readonly jpws = "　";
+
+    constructor() {
+        super();
+
+        for (let i = 0; i < 10; i++) {
+            this.kanjiResults.push({ index: i, kanji: this.jpws });
         }
     }
 
@@ -70,10 +88,54 @@ export default class App extends Vue {
     public $refs!: {
         signaturePadCanvas: HTMLCanvasElement;
         actionsLeft: HTMLDivElement;
-        actionMode: HTMLDivElement;
+        algoMode: HTMLDivElement;
     };
 
-    public actionText = "SPANS";
+    public clear() {
+        this.pad.clear();
+        this.inputStrokes = [];
+        this.clearKanjiResults();
+    }
+
+    public undo() {
+        const data = this.pad.toData();
+        if (data) {
+            data.pop(); // remove the last dot or line
+            this.inputStrokes.pop();
+            this.pad.fromData(data);
+
+            const hasStrokes = this.inputStrokes.length > 0;
+
+            this.undoDisabled = this.clearDisabled = !hasStrokes; // disable buttons if empty after
+            if (!hasStrokes) {
+                this.clearKanjiResults();
+            } else {
+                this.searchKanji();
+            }
+        }
+    }
+
+    private clearKanjiResults() {
+        for (const r of this.kanjiResults) {
+            r.kanji = this.jpws;
+        }
+    }
+
+    private searchKanji() {
+        const potentialKanji = new KanjiInfo("?");
+        for (const is of this.inputStrokes) {
+            potentialKanji.addStroke(is);
+        }
+        potentialKanji.finish();
+
+        const top10Matches = this.kanjiList.getTopMatches(potentialKanji, MatchAlgorithm.FUZZY).slice(0, 10);
+        console.log("top10Matches");
+        console.log(top10Matches);
+
+        for (let i = 0; i < top10Matches.length; i++) {
+            this.kanjiResults[i].kanji = top10Matches[i].kanjiInfo.kanji; 
+        }
+    }
 
     // lifecycle hook
     public mounted() {
@@ -85,8 +147,19 @@ export default class App extends Vue {
             this.canvas = this.$refs.signaturePadCanvas;
 
             this.pad = new signature_pad(this.canvas, {
-                onEnd: () => {
+                onBegin: (evt) => {
+                    this.startX = evt.clientX;
+                    this.startY = evt.clientY;
+                },
+                onEnd: (evt) => {
+                    this.endX = evt.clientX;
+                    this.endY = evt.clientY;
                     this.undoDisabled = this.clearDisabled = false;
+
+                    const stroke = InputStroke.fromFloats(this.startX, this.startY, this.endX, this.endY);
+                    this.inputStrokes.push(stroke);
+
+                    this.searchKanji();
                     // this.$emit("input", this.pad.toDataURL());
                 },
             });
@@ -94,6 +167,7 @@ export default class App extends Vue {
             this.fetchKanjiList()
                 .then((kanjiList) => {
                     if (kanjiList.isFinished()) {
+                        this.kanjiList = kanjiList;
                         this.isLoading = false;
 
                         // isLoading = false will bring in the canvas
@@ -122,27 +196,10 @@ export default class App extends Vue {
         this.pad.clear();
     }
 
-    // // Component Props
-    // @Prop() private data!: any[];
-
-    public variant = "700";
-    public variantOutline = "outline-700";
-
-    // Initial data can be declared as class properties...
-    public buttons = [
-        { kanji: "一" },
-        { kanji: "二" },
-        { kanji: "三" },
-        { kanji: "四" },
-        { kanji: "五" },
-        { kanji: "六" },
-        { kanji: "七" },
-        { kanji: "八" },
-        { kanji: "九" },
-        { kanji: "十" },
-    ];
-
     public copyKanji(kanji: string) {
+        if (!kanji) {
+            return;
+        }
         const textArea = document.createElement("textarea");
         textArea.value = kanji;
         textArea.style.cssText = "position:fixed;pointer-events:none;z-index:-9999;opacity:0";
@@ -155,9 +212,6 @@ export default class App extends Vue {
         }
         document.body.removeChild(textArea);
     }
-
-    public isLoading = true;
-    public message = "Loading";
 
     private fetchKanjiList(): Promise<KanjiList> {
         return new Promise((resolve, reject) => {
