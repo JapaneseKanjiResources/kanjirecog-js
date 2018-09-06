@@ -21,11 +21,28 @@
                     </b-button-group>
                 </div>
             </div>
-            <div style="height: 15px">
-            </div>
+            <div style="height: 15px"></div>
             <div>
-                <b-button-group size="sm" ref="actionsRight">
-                    <b-button v-for="res in kanjiResults"
+                <b-button-group size="sm">
+                    <b-button v-for="res in kanjiResults1"
+                            :variant="variantOutline"
+                            :key="res.index"
+                            @click="copyKanji(res.kanji)">
+                        {{ res.kanji }}
+                    </b-button>
+                </b-button-group>
+                <div style="height: 1px"></div>
+                <b-button-group size="sm">
+                    <b-button v-for="res in kanjiResults2"
+                            :variant="variantOutline"
+                            :key="res.index"
+                            @click="copyKanji(res.kanji)">
+                        {{ res.kanji }}
+                    </b-button>
+                </b-button-group>
+                <div style="height: 1px"></div>
+                <b-button-group size="sm">
+                    <b-button v-for="res in kanjiResults3"
                             :variant="variantOutline"
                             :key="res.index"
                             @click="copyKanji(res.kanji)">
@@ -64,7 +81,9 @@ export default class App extends Vue {
     public undoDisabled = true;
     public algoText = "FUZZY";
 
-    public readonly kanjiResults: any[] = [];
+    public readonly kanjiResults1: any[] = [];
+    public readonly kanjiResults2: any[] = [];
+    public readonly kanjiResults3: any[] = [];
 
     // logic
     private kanjiList: KanjiList;
@@ -79,8 +98,11 @@ export default class App extends Vue {
     constructor() {
         super();
 
+        const instr = "ここには手書き入力された文字に対応する候補文字が表示されます";
         for (let i = 0; i < 10; i++) {
-            this.kanjiResults.push({ index: i, kanji: this.jpws });
+            this.kanjiResults1.push({ index: i, kanji: instr[i] });
+            this.kanjiResults2.push({ index: i, kanji: instr[i + 10] });
+            this.kanjiResults3.push({ index: i, kanji: instr[i + 20] });
         }
     }
 
@@ -116,9 +138,9 @@ export default class App extends Vue {
     }
 
     private clearKanjiResults() {
-        for (const r of this.kanjiResults) {
-            r.kanji = this.jpws;
-        }
+        this.kanjiResults1.forEach((kr) => kr.kanji = this.jpws);
+        this.kanjiResults2.forEach((kr) => kr.kanji = this.jpws);
+        this.kanjiResults3.forEach((kr) => kr.kanji = this.jpws);
     }
 
     private searchKanji() {
@@ -128,12 +150,12 @@ export default class App extends Vue {
         }
         potentialKanji.finish();
 
-        const top10Matches = this.kanjiList.getTopMatches(potentialKanji, MatchAlgorithm.FUZZY).slice(0, 10);
-        console.log("top10Matches");
-        console.log(top10Matches);
-
-        for (let i = 0; i < top10Matches.length; i++) {
-            this.kanjiResults[i].kanji = top10Matches[i].kanjiInfo.kanji; 
+        const matches = this.kanjiList.getTopMatches(potentialKanji, MatchAlgorithm.FUZZY).slice(0, 30);
+        console.log(matches);
+        for (let i = 0; i < 10; i++) {
+            this.kanjiResults1[i].kanji = (matches[i]) ? matches[i].kanjiInfo.kanji : this.jpws;
+            this.kanjiResults2[i].kanji = (matches[i + 10]) ? matches[i + 10].kanjiInfo.kanji : this.jpws;
+            this.kanjiResults3[i].kanji = (matches[i + 20]) ? matches[i + 20].kanjiInfo.kanji : this.jpws;
         }
     }
 
@@ -274,6 +296,7 @@ export default class App extends Vue {
             &.focus {
                 box-shadow: none;
             }
+            border-color: $gray-300
         }
     }
 </style>
