@@ -1,9 +1,10 @@
 <template>
+
     <div id="app" class="signature-pad">
         <div v-show="isLoading" data-alert="">
             <div v-text="message"></div>
         </div>
-        
+
         <div v-show="!isLoading" class="signature-pad-main">
             <div class="signature-pad--body">
                 <canvas ref="signaturePadCanvas"></canvas>
@@ -12,11 +13,11 @@
             <div class="signature-pad--footer">
                 <div class="signature-pad--actions">
                     <b-button-group size="sm" ref="actionsLeft">
-                        <b-button class="remove-focus-box-shadow" :variant="variant">CLEAR</b-button>
-                        <b-button class="remove-focus-box-shadow" :variant="variant">UNDO</b-button>
+                        <b-button :disabled="clearDisabled" :variant="variant" @click="clear()">CLEAR</b-button>
+                        <b-button :disabled="undoDisabled" :variant="variant" @click="undo()">UNDO</b-button>
                     </b-button-group>
                     <b-button-group size="sm">
-                        <b-button class="remove-focus-box-shadow" variant="700" ref="actionMode">FUZZY</b-button>
+                        <b-button variant="700" ref="actionMode">FUZZY</b-button>
                     </b-button-group>
                 </div>
             </div>
@@ -25,7 +26,6 @@
             <div>
                 <b-button-group size="sm" ref="actionsRight">
                     <b-button v-for="btn in buttons"
-                            class="remove-focus-box-shadow"
                             :pressed.sync="btn.state"
                             :variant="variantOutline"
                             :key="btn.kanji">
@@ -38,15 +38,32 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Provide, Vue } from "vue-property-decorator";
 import signature_pad from "signature_pad";
 import pako from "pako";
 import { KanjiList } from "../src/KanjiList";
+import { MatchAlgorithm } from "../src/MatchAlgorithm";
 
 @Component({})
 export default class App extends Vue {
   private pad!: signature_pad;
     private canvas!: HTMLCanvasElement;
+
+    public clearDisabled = true;
+    public undoDisabled = true;
+
+    public clear() {
+        this.pad.clear();
+    }
+
+    public undo() {
+        const data = this.pad.toData();
+        if (data) {
+            data.pop(); // remove the last dot or line
+            this.pad.fromData(data);
+            this.undoDisabled = this.clearDisabled = !data.length; // disable buttons if empty after
+        }
+    }
 
     // dynamic component
     public $refs!: {
@@ -66,7 +83,8 @@ export default class App extends Vue {
 
             this.pad = new signature_pad(this.canvas, {
                 onEnd: () => {
-                    this.$emit("input", this.pad.toDataURL());
+                    this.undoDisabled = this.clearDisabled = false;
+                    //this.$emit("input", this.pad.toDataURL());
                 },
             });
 
@@ -75,7 +93,7 @@ export default class App extends Vue {
                     if (kanjiList.isFinished()) {
                         this.isLoading = false;
 
-                        // isLoading = false will in the canvas
+                        // isLoading = false will bring in the canvas
                         // but we can only resize it after it has been rendered
                         this.$nextTick(() => {
                             this.resizeCanvas();
@@ -156,6 +174,7 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
+    
     // find these variables in docs and node_modules/bootstrap/scss/bootstrap.scss
     // $font-size-sm: .675rem !default;
     @import "~bootstrap/scss/bootstrap";  // import complete bootstrap.scss source from node_modules using ~ alias
@@ -163,21 +182,23 @@ export default class App extends Vue {
     @each $gray, $value in $grays {
         .btn-#{$gray} {
             @include button-variant($value, $value);
+            border-color: white; // white border/seperator in button group
+            &:focus,
+            &.focus {
+                box-shadow: none;
+            }
         }
     }
 
     @each $gray, $value in $grays {
         .btn-outline-#{$gray} {
             @include button-outline-variant($value);
+            &:focus,
+            &.focus {
+                box-shadow: none;
+            }
         }
     }
-
-    .remove-focus-box-shadow {
-    &:focus,
-    &.focus {
-        box-shadow: none;
-    }
-}
 </style>
 
 <style>
