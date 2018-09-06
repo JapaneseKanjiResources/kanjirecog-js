@@ -182,7 +182,7 @@ if (isMain) {
             ws.end();
 
             fs.readFile(datPath, (err, data) => {
-                const ungzipped = pako.inflate(buffer);
+                const ungzipped = pako.inflate(buffer, { to: "string" });
                 console.log(ungzipped.length);
             });
         });

@@ -1,5 +1,5 @@
 import { KanjiInfo } from "./KanjiInfo";
-import { KanjiInfoDto, KanjiInfoBinaryDto } from "./KanjiInfoDto";
+import { KanjiInfoDto } from "./KanjiInfoDto";
 import { MatchAlgorithm } from "./MatchAlgorithm";
 import { KanjiMatch } from "./KanjiMatch";
 
@@ -10,7 +10,7 @@ import { KanjiMatch } from "./KanjiMatch";
 export class KanjiList {
 
     // private kanji: IKanjiInfoMap = {};
-    private kanjiInfos = new Map<number, KanjiInfo[]>();
+    public  kanjiInfos = new Map<number, KanjiInfo[]>();
     private finished = false;
 
     /**
@@ -123,24 +123,20 @@ export class KanjiList {
         return results;
     }
 
+    public load(dtos: KanjiInfoDto[]) {
+        this.kanjiInfos.clear();
+        for (const dto of dtos) {
+            this.add(KanjiInfo.fromFull(dto.kanji, dto.strokes));
+        }
+        this.finish();
+    }
+
     public save(): KanjiInfoDto[] {
         this.checkFinished();
         const output: KanjiInfoDto[] = [];
         for (const kinfos of this.kanjiInfos.values()) {
             for (const character of kinfos) {
                 const kinfoDto = character.write();
-                output.push(kinfoDto);
-            }
-        }
-        return output;
-    }
-
-    public saveBinary(): KanjiInfoBinaryDto[] {
-        this.checkFinished();
-        const output: KanjiInfoBinaryDto[] = [];
-        for (const kinfos of this.kanjiInfos.values()) {
-            for (const character of kinfos) {
-                const kinfoDto = character.writeBinary();
                 output.push(kinfoDto);
             }
         }
