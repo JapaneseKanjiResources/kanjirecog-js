@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Provide, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import signature_pad from "signature_pad";
 import pako from "pako";
 import { KanjiList } from "../src/KanjiList";
@@ -87,7 +87,7 @@ export default class App extends Vue {
             this.pad = new signature_pad(this.canvas, {
                 onEnd: () => {
                     this.undoDisabled = this.clearDisabled = false;
-                    //this.$emit("input", this.pad.toDataURL());
+                    // this.$emit("input", this.pad.toDataURL());
                 },
             });
 
@@ -179,9 +179,15 @@ export default class App extends Vue {
                 const bin = xhr.response;
                 const json = pako.inflate(new Uint8Array(bin), { to: "string" });
 
-                const dtos: KanjiInfoDto[] = JSON.parse(json);
+                // KanjiInfoDto stricly not required since
+                // we are the producer of strokes.dat
+                // const dtos: KanjiInfoDto[] = JSON.parse(json);
+                const dtos = JSON.parse(json);
                 const kanjiList = new KanjiList();
                 kanjiList.load(dtos);
+
+                // log a sample
+                console.log(kanjiList.getKanji(1));
 
                 resolve(kanjiList);
             };
