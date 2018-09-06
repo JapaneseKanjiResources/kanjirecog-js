@@ -1,53 +1,59 @@
 <template>
-    <div id="app" class="signature-pad">
-        <div v-show="isLoading" data-alert="">
-            <div v-text="message"></div>
-        </div>
+    <div class="outer">
 
-        <div v-show="!isLoading" class="signature-pad-main">
-            <div class="signature-pad--body">
-                <canvas ref="signaturePadCanvas"></canvas>
+        <div class="logo">
+        </div>
+        
+        <div class="signature-pad">
+            <div v-show="isLoading" class="signature-pad-loading">
+                {{message}}
             </div>
 
-            <div class="signature-pad--footer">
-                <div class="signature-pad--actions">
-                    <b-button-group size="sm" ref="actionsLeft">
-                        <b-button :disabled="clearDisabled" :variant="variant" @click="clear()">CLEAR</b-button>
-                        <b-button :disabled="undoDisabled" :variant="variant" @click="undo()">UNDO</b-button>
-                    </b-button-group>
+            <div v-show="!isLoading" class="signature-pad-main">
+                <div class="signature-pad--body">
+                    <canvas ref="signaturePadCanvas"></canvas>
+                </div>
+
+                <div class="signature-pad--footer">
+                    <div class="signature-pad--actions">
+                        <b-button-group size="sm" ref="actionsLeft">
+                            <b-button :disabled="clearDisabled" :variant="variant" @click="clear()">CLEAR</b-button>
+                            <b-button :disabled="undoDisabled" :variant="variant" @click="undo()">UNDO</b-button>
+                        </b-button-group>
+                        <b-button-group size="sm">
+                            <b-button variant="700" ref="algoMode">{{algoText}}</b-button>
+                        </b-button-group>
+                    </div>
+                </div>
+                <div style="height: 15px"></div>
+                <div>
                     <b-button-group size="sm">
-                        <b-button variant="700" ref="algoMode">{{algoText}}</b-button>
+                        <b-button v-for="res in kanjiResults1"
+                                :variant="variantOutline"
+                                :key="res.index"
+                                @click="copyKanji(res.kanji)">
+                            {{ res.kanji }}
+                        </b-button>
+                    </b-button-group>
+                    <div style="height: 1px"></div>
+                    <b-button-group size="sm">
+                        <b-button v-for="res in kanjiResults2"
+                                :variant="variantOutline"
+                                :key="res.index"
+                                @click="copyKanji(res.kanji)">
+                            {{ res.kanji }}
+                        </b-button>
+                    </b-button-group>
+                    <div style="height: 1px"></div>
+                    <b-button-group size="sm">
+                        <b-button v-for="res in kanjiResults3"
+                                :variant="variantOutline"
+                                :key="res.index"
+                                @click="copyKanji(res.kanji)">
+                            {{ res.kanji }}
+                        </b-button>
                     </b-button-group>
                 </div>
-            </div>
-            <div style="height: 15px"></div>
-            <div>
-                <b-button-group size="sm">
-                    <b-button v-for="res in kanjiResults1"
-                            :variant="variantOutline"
-                            :key="res.index"
-                            @click="copyKanji(res.kanji)">
-                        {{ res.kanji }}
-                    </b-button>
-                </b-button-group>
-                <div style="height: 1px"></div>
-                <b-button-group size="sm">
-                    <b-button v-for="res in kanjiResults2"
-                            :variant="variantOutline"
-                            :key="res.index"
-                            @click="copyKanji(res.kanji)">
-                        {{ res.kanji }}
-                    </b-button>
-                </b-button-group>
-                <div style="height: 1px"></div>
-                <b-button-group size="sm">
-                    <b-button v-for="res in kanjiResults3"
-                            :variant="variantOutline"
-                            :key="res.index"
-                            @click="copyKanji(res.kanji)">
-                        {{ res.kanji }}
-                    </b-button>
-                </b-button-group>
             </div>
         </div>
     </div>
@@ -298,9 +304,7 @@ export default class App extends Vue {
             border-color: $gray-300
         }
     }
-</style>
 
-<style>
 /* style borrowed from http://szimek.github.io/signature_pad */
 *,
 *::before,
@@ -330,9 +334,21 @@ body {
   font-family: Helvetica, Sans-Serif;
 }
 
-.signature-pad {
+.outer {
   position: relative;
   width: 346px;
+  height: 100%;
+  min-width: 346px;
+  max-height: 535px;
+}
+
+.logo {
+  height: 70px;
+  background: url("./assets/logo-transparent-bg.png") no-repeat center;
+}
+
+.signature-pad {
+  width: 100%;
   height: 100%;
   min-width: 346px;
   max-height: 460px;
@@ -343,8 +359,17 @@ body {
   padding: 16px;
 }
 
+.signature-pad-loading {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 440px;
+  color: $gray-500;
+}
+
 .signature-pad-main {
-  position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
