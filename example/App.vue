@@ -6,29 +6,27 @@
 
         <div class="signature-pad--footer">
             <div class="signature-pad--actions">
-                <div>
-                    <button type="button" class="button clear" data-action="clear">CLEAR</button>
-                    <button type="button" class="button" data-action="undo">UNDO</button>
-                </div>
-            
-                <div>
-                    <button type="button" class="button save" data-action="save-png">FUZZY</button>
-                </div>
+                <b-button-group size="sm" style="margin-bottom: 0.5rem">
+                    <b-button variant="dark">CLEAR</b-button>
+                    <b-button variant="dark">UNDO</b-button>
+                </b-button-group>
+
+                <b-button-group size="sm" style="margin-bottom: 0.5rem">
+                    <b-button variant="dark">FUZZY</b-button>
+                </b-button-group>
             </div>
         </div>
 
-        <div ref="nav">
-            <button class="col">一</button>
-            <button class="col">二</button>
-            <button class="col">三</button>
-            <button class="col">四</button>
-            <button class="col">五</button>
-            <button class="col">六</button>
-            <button class="col">七</button>
-            <button class="col">八</button>
-            <button class="col">九</button>
-            <button class="col">十</button>
-        </div>
+        <b-button-group size="sm">
+            <b-button v-for="btn in buttons"
+                      class="remove-focus-box-shadow"
+                      :pressed.sync="btn.state" 
+                      :variant="btn.variant" 
+                      :key="btn.variant">
+                {{ btn.caption }}
+            </b-button>
+        </b-button-group>
+        
     </div>
 </template>
 
@@ -41,10 +39,12 @@ export default class App extends Vue {
   private pad!: signature_pad;
     private canvas!: HTMLCanvasElement;
 
+    // dynamic component
     public $refs!: {
         signaturePadCanvas: HTMLCanvasElement;
     };
 
+    // lifecycle hook
     public mounted() {
         this.$nextTick(() => {
             // Code that will run only after the
@@ -79,11 +79,39 @@ export default class App extends Vue {
         this.pad.clear();
     }
 
-    // Component Props
-    @Prop() private data!: any[];
+    // // Component Props
+    // @Prop() private data!: any[];
 
+    public variant = "outline-dark";
+
+    // Initial data can be declared as class properties...
+    public buttons = [
+        { variant: this.variant, caption: "一" },
+        { variant: this.variant, caption: "二" },
+        { variant: this.variant, caption: "三" },
+        { variant: this.variant, caption: "四" },
+        { variant: this.variant, caption: "五" },
+        { variant: this.variant, caption: "六" },
+        { variant: this.variant, caption: "七" },
+        { variant: this.variant, caption: "八" },
+        { variant: this.variant, caption: "九" },
+        { variant: this.variant, caption: "十" },
+      ];
 }
 </script>
+
+<style lang="scss">
+  // find these variables in docs and node_modules/bootstrap/scss/bootstrap.scss
+  // $font-size-sm: .675rem !default;
+  @import "~bootstrap/scss/bootstrap";  // import complete bootstrap.scss source from node_modules using ~ alias
+
+.remove-focus-box-shadow {
+  &:focus,
+  &.focus {
+    box-shadow: none;
+  }
+}
+</style>
 
 <style>
 /* style borrowed from http://szimek.github.io/signature_pad */
