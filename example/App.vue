@@ -233,9 +233,9 @@ body {
 
 .signature-pad {
   position: relative;
-  width: 100%;
+  width: 346px;
   height: 100%;
-  max-width: 700px;
+  min-width: 346px;
   max-height: 460px;
   border: 1px solid #e8e8e8;
   background-color: #fff;
