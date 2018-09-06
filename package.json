@@ -27,6 +27,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-optional-catch-binding": "^7.0.0",
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
     "@vue/cli-plugin-babel": "^3.0.1",
