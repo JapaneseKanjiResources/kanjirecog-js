@@ -13,6 +13,8 @@ export class KanjiList {
     public  kanjiInfos = new Map<number, KanjiInfo[]>();
     private finished = false;
 
+    public isFinished() { return this.finished; }
+
     /**
 	 * Adds a kanji to the list.
 	 * @param info Kanji to add
